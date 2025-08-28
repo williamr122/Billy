@@ -491,7 +491,7 @@ export default function App() {
                     >
                       <ShoppingCart className="w-4 h-4" /> Añadir
                     </button>
-                    <a
+                    <button
                       href="#"
                       className="text-sm opacity-70 inline-flex items-center gap-1"
                       onClick={(e) => {
@@ -501,7 +501,7 @@ export default function App() {
                       }}
                     >
                       Detalles <ChevronRight className="w-4 h-4" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               </motion.div>
