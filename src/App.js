@@ -5,7 +5,6 @@ import {
   Search,
   Moon,
   Sun,
-  Star,
   Sparkles,
   Phone,
   MapPin,
@@ -26,62 +25,62 @@ const CATEGORIES = [
   { id: "hamburguesas", label: "Hamburguesas" },
   { id: "salchipapas", label: "Salchipapas" },
   { id: "papas", label: "Papas con tocino" },
-  { id: "combos", label: "Combos" },
-  { id: "bebidas", label: "Bebidas" },
+  //  { id: "combos", label: "Combos" },
+  //  { id: "bebidas", label: "Bebidas" },
   { id: "extras", label: "Extras" },
 ];
 
 const PRODUCTS = [
   {
-    id: "bb-classic",
-    name: "Billy Classic Burger",
-    desc: "Carne 150g, queso cheddar, lechuga, tomate, pepinillos y la salsa secreta Billy.",
-    price: 5.9,
+    id: "Clasica",
+    name: "Hamburguesa Clasica",
+    desc: "Pan de finas hierbas, Carne 100g, queso cheddar, salsa de tomate, mayonesa, lechuga, tomate, y porción de papas.",
+    price: 3,
     category: "hamburguesas",
     img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1400&auto=format&fit=crop",
     badges: ["TOP", "Salsa secreta"],
   },
   {
-    id: "bb-bacon",
-    name: "Billy Bacon Lover",
-    desc: "Doble queso, tocino crujiente y mayonesa ahumada en pan brioche.",
-    price: 7.2,
+    id: "Bacon",
+    name: "Hamburguesa Bacon",
+    desc: "Pan de oregano con queso, Doble queso, tocino crujiente y mayonesa ahumada en pan brioche.",
+    price: 4,
     category: "hamburguesas",
     img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1400&auto=format&fit=crop",
     badges: ["Más vendido"],
   },
   {
-    id: "bb-mex",
-    name: "Mex Fire Burger",
-    desc: "Jalapeños, guacamole, pico de gallo y cheddar fundido.",
-    price: 7.9,
+    id: "Completa",
+    name: "Hamburguesa Completa",
+    desc: "Pan de finas hierbas + carne + lechuga + tomate + mayonesa + salsa de tomate + lamina de cheddar y porción de papas.",
+    price: 5,
     category: "hamburguesas",
-    img: "https://images.unsplash.com/photo-1550317138-10000687a72b?q=80&w=1400&auto=format&fit=crop",
+    img: "/i/hamburguesa completa.png",
     badges: ["Picante"],
   },
   {
-    id: "bb-salchi-classic",
-    name: "Salchipapas Clásicas",
-    desc: "Papas doradas + salchichas a la plancha, salsas ketchup y mayo.",
+    id: "salchipapa",
+    name: "Salchipapa",
+    desc: "Papas fritas + paprika + salchichas + salsa de tomate + mayonesa y queso cheddar.",
     price: 4.5,
     category: "salchipapas",
     img: "https://images.unsplash.com/photo-1616486886892-8de9a54b322c?q=80&w=1400&auto=format&fit=crop",
     badges: ["Porción generosa"],
   },
   {
-    id: "bb-salchi-cheese",
-    name: "Salchipapas Queso & Bacon",
-    desc: "Baño de queso cheddar, trocitos de tocino y cebollín.",
-    price: 5.8,
+    id: "papas cheddar",
+    name: "Papas cheddar",
+    desc: "Papas fritas + paprika + queso cheddar y papitas trituradas",
+    price: 2.5,
     category: "salchipapas",
     img: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1400&auto=format&fit=crop",
     badges: ["Recomendado"],
   },
   {
-    id: "bb-papas-bacon",
-    name: "Papas con Tocino",
-    desc: "Corte rústico, queso cheddar fundido, tocino crocante y alioli.",
-    price: 4.9,
+    id: "salchipapa con tocino",
+    name: "Salchipapa con Tocino",
+    desc: "Papas fritas + paprika + salchichas + tocino + salsa de tomate + mayonesa y queso cheddar",
+    price: 3.5,
     category: "papas",
     img: "https://images.unsplash.com/photo-1550547660-1f62116f7a14?q=80&w=1400&auto=format&fit=crop",
     badges: ["Crocantes"],
@@ -92,7 +91,7 @@ const PRODUCTS = [
     desc: "Classic Burger + Papas + Bebida 12oz.",
     price: 8.9,
     category: "combos",
-    img: "https://images.unsplash.com/photo-1561758033-d89a9ad46330?q=80&w=1400&auto=format&fit=crop",
+    img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1400&auto=format&fit=crop",
     badges: ["Ahorra"],
   },
   {
@@ -123,12 +122,12 @@ const PRODUCTS = [
     badges: ["Refrescante"],
   },
   {
-    id: "bb-anillos",
-    name: "Onion Rings",
-    desc: "Aros de cebolla extra crujientes.",
-    price: 2.8,
+    id: "aros cebolla",
+    name: "Aros de cebolla",
+    desc: "8 Aros de cebolla + salsa BBQ + porcion de papas.",
+    price: 2.5,
     category: "extras",
-    img: "https://images.unsplash.com/photo-1526312426976-593c2eb05b3b?q=80&w=1400&auto=format&fit=crop",
+    img: "/i/Aros de cebolla.jpg",
     badges: [],
   },
   {
@@ -315,7 +314,7 @@ export default function App() {
       )
       .join("\n")}\n\nTotal: ${currency(total)}`
   );
-  const whatsappLink = `https://wa.me/593984359655?text=${whatsappText}`; // Reemplazar número
+  const whatsappLink = `https://wa.me/593984097456?text=${whatsappText}`;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-100 dark:from-neutral-950 dark:to-neutral-900 text-neutral-900 dark:text-neutral-100 font-sans">
@@ -358,17 +357,11 @@ export default function App() {
               transition={{ duration: 0.5 }}
               className="text-4xl md:text-5xl font-black leading-tight"
             >
-              Mordidas gigantes,{" "}
               <span className="text-orange-600 dark:text-amber-400">
-                sabor brutal
+                La combinación perfecta: Hamburguesa con papas.
               </span>
-              .
             </motion.h2>
-            <p className="mt-4 text-lg opacity-80">
-              Bienvenido a <strong>Billy Burger</strong>, el hogar de las
-              hamburguesas jugosas, salchipapas legendarias y papas con tocino
-              que derriten.
-            </p>
+
             <div className="mt-6 flex flex-wrap gap-3">
               <a
                 href="#menu"
@@ -385,20 +378,13 @@ export default function App() {
                 <Phone className="w-4 h-4" /> Ordenar por WhatsApp
               </a>
             </div>
-            <div className="mt-4 flex items-center gap-1 text-amber-500">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <Star key={i} className="w-5 h-5 fill-current" />
-              ))}
-              <span className="ml-2 text-sm opacity-80">
-                4.95 · +1.2k reseñas
-              </span>
-            </div>
+
             <div className="mt-4 flex items-center gap-4 text-sm opacity-80">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" /> Centro · Guayaquil
+                <MapPin className="w-4 h-4" /> Guayaquil · Pancho Jacome
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> 12:00–23:00
+                <Clock className="w-4 h-4" /> 18:30 – 22:00
               </div>
             </div>
           </div>
@@ -409,9 +395,9 @@ export default function App() {
             className="relative w-full max-w-sm mx-auto"
           >
             <img
-              src="/logo.png"
+              src="/logo_billy_burgers.png"
               alt="Logo de Billy Burger"
-              className="rounded-full shadow-2xl border border-black/10 dark:border-white/10 w-full aspect-square object-cover"
+              lassName="rounded-full shadow-2xl border border-black/10 dark:border-white/100 w-full aspect-square object-fill"
             />
           </motion.div>
         </div>
@@ -507,45 +493,6 @@ export default function App() {
               </motion.div>
             ))}
           </AnimatePresence>
-        </div>
-      </section>
-
-      {/* Destacados / Promos */}
-      <section className="max-w-7xl mx-auto px-4 pb-16">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="rounded-3xl p-6 bg-gradient-to-br from-orange-200 to-amber-200 dark:from-amber-900/40 dark:to-orange-900/40 border border-black/10 dark:border-white/10">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-xl font-black">20% de descuento</h3>
-                <p className="mt-1 text-sm opacity-80">En tu primera orden</p>
-              </div>
-              <div className="p-2 rounded-full bg-orange-300 dark:bg-amber-800">
-                <Star className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-          <div className="rounded-3xl p-6 bg-gradient-to-br from-orange-200 to-amber-200 dark:from-amber-900/40 dark:to-orange-900/40 border border-black/10 dark:border-white/10">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-xl font-black">Envío gratis</h3>
-                <p className="mt-1 text-sm opacity-80">En pedidos de +$15</p>
-              </div>
-              <div className="p-2 rounded-full bg-orange-300 dark:bg-amber-800">
-                <ShoppingCart className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
-          <div className="rounded-3xl p-6 bg-gradient-to-br from-orange-200 to-amber-200 dark:from-amber-900/40 dark:to-orange-900/40 border border-black/10 dark:border-white/10">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-xl font-black">Paga en efectivo</h3>
-                <p className="mt-1 text-sm opacity-80">O con tarjeta</p>
-              </div>
-              <div className="p-2 rounded-full bg-orange-300 dark:bg-amber-800">
-                <Phone className="w-5 h-5" />
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
