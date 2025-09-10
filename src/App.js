@@ -24,8 +24,8 @@ const CATEGORIES = [
   { id: "todos", label: "Todos" },
   { id: "hamburguesas", label: "Hamburguesas" },
   { id: "salchipapas", label: "Salchipapas" },
+  { id: "alitas", label: "Alitas" },
   { id: "papas", label: "Papas con tocino" },
-  //  { id: "combos", label: "Combos" },
   //  { id: "bebidas", label: "Bebidas" },
   { id: "extras", label: "Extras" },
 ];
@@ -34,7 +34,7 @@ const PRODUCTS = [
   {
     id: "Clasica",
     name: "Hamburguesa Clasica",
-    desc: "Pan de finas hierbas, Carne 100g, queso cheddar, salsa de tomate, mayonesa, lechuga, tomate, y porción de papas.",
+    desc: "Pan de finas hierbas + Carne + queso cheddar + salsa de tomate + mayonesa + lechuga + tomate + porción de papas.",
     price: 3,
     category: "hamburguesas",
     img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1400&auto=format&fit=crop",
@@ -43,7 +43,7 @@ const PRODUCTS = [
   {
     id: "Bacon",
     name: "Hamburguesa Bacon",
-    desc: "Pan de oregano con queso, Doble queso, tocino crujiente y mayonesa ahumada en pan brioche.",
+    desc: "Pan de queso con orégano + carne + tocino + lechuga + tomate + mayonesa + salsa de tomate + lamina de mozzarella + huevo + porción de papas.",
     price: 4,
     category: "hamburguesas",
     img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1400&auto=format&fit=crop",
@@ -52,7 +52,7 @@ const PRODUCTS = [
   {
     id: "Completa",
     name: "Hamburguesa Completa",
-    desc: "Pan de finas hierbas + carne + lechuga + tomate + mayonesa + salsa de tomate + lamina de cheddar y porción de papas.",
+    desc: "Pan de queso con orégano + doble carne + doble tocino + cheddar liquido + dos laminas de mozzarella + huevo + porción de papas.",
     price: 5,
     category: "hamburguesas",
     img: "/i/hamburguesa completa.png",
@@ -64,7 +64,7 @@ const PRODUCTS = [
     desc: "Papas fritas + paprika + salchichas + salsa de tomate + mayonesa y queso cheddar.",
     price: 4.5,
     category: "salchipapas",
-    img: "https://images.unsplash.com/photo-1616486886892-8de9a54b322c?q=80&w=1400&auto=format&fit=crop",
+    img: "/i/salchipapa.jpg",
     badges: ["Porción generosa"],
   },
   {
@@ -73,7 +73,7 @@ const PRODUCTS = [
     desc: "Papas fritas + paprika + queso cheddar y papitas trituradas",
     price: 2.5,
     category: "salchipapas",
-    img: "https://images.unsplash.com/photo-1544025162-d76694265947?q=80&w=1400&auto=format&fit=crop",
+    img: "/i/papascheddar.jpg",
     badges: ["Recomendado"],
   },
   {
@@ -81,44 +81,44 @@ const PRODUCTS = [
     name: "Salchipapa con Tocino",
     desc: "Papas fritas + paprika + salchichas + tocino + salsa de tomate + mayonesa y queso cheddar",
     price: 3.5,
-    category: "papas",
-    img: "https://images.unsplash.com/photo-1550547660-1f62116f7a14?q=80&w=1400&auto=format&fit=crop",
+    category: "salchipapas",
+    img: "/i/salchipapatocino.jpg",
     badges: ["Crocantes"],
   },
   {
-    id: "bb-combo-1",
-    name: "Combo Billy #1",
-    desc: "Classic Burger + Papas + Bebida 12oz.",
-    price: 8.9,
-    category: "combos",
-    img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1400&auto=format&fit=crop",
+    id: "papaschili",
+    name: "Papas chili",
+    desc: "Papas fritas + paprika + chili + jalapeño + cheddar",
+    price: 3.5,
+    category: "salchipapas",
+    img: "/i/papas chili.jpg",
     badges: ["Ahorra"],
   },
   {
-    id: "bb-combo-2",
-    name: "Combo Bacon",
-    desc: "Bacon Lover + Papas con tocino + Bebida 16oz.",
-    price: 10.9,
-    category: "combos",
-    img: "https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?q=80&w=1400&auto=format&fit=crop",
+    id: "papasmix",
+    name: "Papas mix",
+    desc: "Papas fritas + paprika + salchichas + chili + jalapeño + mayonesa + salsa de tomate + cheddar",
+    price: 4,
+    category: "salchipapas",
+    img: "/i/papas mix1.jpg",
     badges: ["Popular"],
   },
   {
-    id: "bb-soda",
-    name: "Soda 12oz",
-    desc: "Coca-Cola | Sprite | Fanta",
-    price: 1.5,
-    category: "bebidas",
-    img: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1400&auto=format&fit=crop",
+    id: "hotdog",
+    name: "Hot Dog",
+    desc: "Pan de hot dog + Salchicha + Tocino + Queso mozzarella + cheddar + Porción de papas",
+    price: 2.5,
+    category: "extras",
+    img: "/i/hotdog.jpg",
     badges: [],
   },
   {
-    id: "bb-limonada",
-    name: "Limonada Frost",
-    desc: "Limonada natural con un toque de menta.",
-    price: 2.2,
-    category: "bebidas",
-    img: "https://images.unsplash.com/photo-1582456891925-7c8b1ae5cda3?q=80&w=1400&auto=format&fit=crop",
+    id: "nachos",
+    name: "Nachos con chili ",
+    desc: "Nachos + Chili + Jalapeños + cheddar",
+    price: 4,
+    category: "extras",
+    img: "/i/nachos con chili.jpg",
     badges: ["Refrescante"],
   },
   {
@@ -131,12 +131,30 @@ const PRODUCTS = [
     badges: [],
   },
   {
-    id: "bb-nuggets",
-    name: "Chicken Nuggets (6)",
-    desc: "Bocados de pollo con salsa BBQ.",
-    price: 3.6,
-    category: "extras",
-    img: "https://images.unsplash.com/photo-1608039829572-78524f93b4e7?q=80&w=1400&auto=format&fit=crop",
+    id: "alitas6",
+    name: "Alitas x 6",
+    desc: "6 alitas con salsa BBQ o Honey mustard",
+    price: 5,
+    category: "alitas",
+    img: "/i/alitasx6.jpg",
+    badges: [],
+  },
+  {
+    id: "alitas12",
+    name: "Alitas x 12",
+    desc: "12 alitas con salsa BBQ o Honey mustard",
+    price: 8,
+    category: "alitas",
+    img: "/i/alitasx12.jpg",
+    badges: [],
+  },
+  {
+    id: "alitas24",
+    name: "Alitas x 24",
+    desc: "24 alitas con salsa BBQ o Honey mustard",
+    price: 15,
+    category: "alitas",
+    img: "/i/alitasx24.jpg",
     badges: [],
   },
 ];
@@ -212,12 +230,12 @@ function ProductDetailsModal({ product, onClose, onAdd }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 bg-white/40 flex items-center justify-center p-4"
       onClick={onClose}
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        animate={{ opacity: 1, scale: 1.2 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ type: "spring", stiffness: 260, damping: 20 }}
         className="relative w-full max-w-lg rounded-3xl overflow-hidden bg-white dark:bg-neutral-950 shadow-2xl border border-black/10 dark:border-white/10"
@@ -321,7 +339,7 @@ export default function App() {
       {/* Barra superior */}
       <header className="sticky top-0 z-40 backdrop-blur supports-[backdrop-filter]:bg-white/60 dark:supports-[backdrop-filter]:bg-black/30 border-b border-black/10 dark:border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Sparkles className="w-6 h-6" />
+          <Sparkles className="w-8 h-8" />
           <h1 className="text-xl font-extrabold tracking-tight">
             Billy Burger
           </h1>
@@ -332,16 +350,16 @@ export default function App() {
               aria-label="Cambiar tema"
             >
               {dark ? (
-                <Sun className="w-5 h-5" />
+                <Sun className="w-8 h-8" />
               ) : (
-                <Moon className="w-5 h-5" />
+                <Moon className="w-8 h-8" />
               )}
             </button>
             <button
               onClick={() => setOpenCart(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white dark:bg-white dark:text-black shadow"
             >
-              <ShoppingCart className="w-5 h-5" /> Carrito ({items.length})
+              <ShoppingCart className="w-8 h-8" /> Carrito ({items.length})
             </button>
           </div>
         </div>
@@ -349,7 +367,7 @@ export default function App() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-10 grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-7xl mx-auto px-4 py-7 grid md:grid-cols-2 gap-8 items-center">
           <div>
             <motion.h2
               initial={{ opacity: 0, y: 20 }}
@@ -395,7 +413,7 @@ export default function App() {
             className="relative w-full max-w-sm mx-auto"
           >
             <img
-              src="/logo_billy_burgers.png"
+              src="/logo_billy_burgerss.png"
               alt="Logo de Billy Burger"
               lassName="rounded-full shadow-2xl border border-black/10 dark:border-white/100 w-full aspect-square object-fill"
             />
@@ -404,7 +422,7 @@ export default function App() {
       </section>
 
       {/* Buscador y categorías */}
-      <section id="menu" className="max-w-7xl mx-auto px-4 py-6">
+      <section id="menu" className="max-w-7xl mx-auto px-4 py-0.01">
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="flex items-center gap-2 flex-1 px-4 py-3 rounded-2xl border border-black/10 dark:border-white/10 bg-white/70 dark:bg-white/5">
             <Search className="w-5 h-5 opacity-70" />
