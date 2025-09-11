@@ -331,7 +331,8 @@ export default function App() {
 
   const items = Object.values(cart);
   const subtotal = items.reduce((s, it) => s + it.qty * it.product.price, 0);
-  const delivery = subtotal > 0 ? 1.2 : 0;
+  const totalItems = items.reduce((sum, it) => sum + it.qty, 0);
+  const delivery = subtotal > 0 ? 0 : 0;
   const total = subtotal + delivery;
 
   const whatsappText = encodeURIComponent(
@@ -373,7 +374,7 @@ export default function App() {
               onClick={() => setOpenCart(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white shadow"
             >
-              <ShoppingCart className="w-7 h-7" /> Carrito ({items.length})
+              <ShoppingCart className="w-7 h-7" /> Carrito ({totalItems})
             </motion.button>
           </div>
         </div>
