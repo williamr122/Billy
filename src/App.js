@@ -21,9 +21,9 @@ import {
 const CATEGORIES = [
   { id: "todos", label: "Todos" },
   { id: "hamburguesas", label: "Hamburguesas" },
-  { id: "salchipapas", label: "Salchipapas" },
+  { id: "papasfritas", label: "Papas" },
   { id: "alitas", label: "Alitas" },
-  { id: "papas", label: "Papas con tocino" },
+  //{ id: "papas", label: "Papas con tocino" },
   { id: "extras", label: "Extras" },
 ];
 
@@ -59,8 +59,8 @@ const PRODUCTS = [
     id: "salchipapa",
     name: "Salchipapa",
     desc: "Papas fritas + paprika + salchichas + salsa de tomate + mayonesa y queso cheddar.",
-    price: 4.5,
-    category: "salchipapas",
+    price: 3,
+    category: "papasfritas",
     img: "/i/salchipapa.jpg",
     badges: [],
   },
@@ -69,7 +69,7 @@ const PRODUCTS = [
     name: "Papas cheddar",
     desc: "Papas fritas + paprika + queso cheddar y papitas trituradas",
     price: 2.5,
-    category: "salchipapas",
+    category: "papasfritas",
     img: "/i/papascheddar.jpg",
     badges: [],
   },
@@ -78,7 +78,7 @@ const PRODUCTS = [
     name: "Salchipapa con Tocino",
     desc: "Papas fritas + paprika + salchichas + tocino + salsa de tomate + mayonesa y queso cheddar",
     price: 3.5,
-    category: "salchipapas",
+    category: "papasfritas",
     img: "/i/salchipapatocino.jpg",
     badges: [],
   },
@@ -87,7 +87,7 @@ const PRODUCTS = [
     name: "Papas chili",
     desc: "Papas fritas + paprika + chili + jalapeño + cheddar",
     price: 3.5,
-    category: "salchipapas",
+    category: "papasfritas",
     img: "/i/papas chili.jpg",
     badges: [],
   },
@@ -96,7 +96,7 @@ const PRODUCTS = [
     name: "Papas mix",
     desc: "Papas fritas + paprika + salchichas + chili + jalapeño + mayonesa + salsa de tomate + cheddar",
     price: 4,
-    category: "salchipapas",
+    category: "papasfritas",
     img: "/i/papas mix1.jpg",
     badges: [],
   },
@@ -250,7 +250,7 @@ function ProductDetailsModal({ product, onClose, onAdd }) {
         />
         <div className="p-5">
           <h2 className="text-3xl font-black">{product.name}</h2>
-          <p className="mt-2 text-lg opacity-80">{product.desc}</p>
+          <p className="mt-2 text-lg opacity-100">{product.desc}</p>
           <div className="mt-4 flex items-center justify-between">
             <div className="text-2xl font-black text-orange-600">
               {currency(product.price)}
@@ -351,7 +351,7 @@ export default function App() {
       {/* Barra superior */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Sparkles className="w-8 h-8" />
+          <Sparkles className="w-7 h-7" />
           <h1 className="text-xl font-extrabold tracking-tight">
             Billy Burger
           </h1>
@@ -373,7 +373,7 @@ export default function App() {
               onClick={() => setOpenCart(true)}
               className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white shadow"
             >
-              <ShoppingCart className="w-8 h-8" /> Carrito ({items.length})
+              <ShoppingCart className="w-7 h-7" /> Carrito ({items.length})
             </motion.button>
           </div>
         </div>
@@ -414,10 +414,10 @@ export default function App() {
 
             <div className="mt-4 flex items-center gap-4 text-sm opacity-80">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" /> Guayaquil · Pancho Jacome
+                <MapPin className="w-4 h-4" /> Guayaquil - Pancho Jacome
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> 18:30 – 22:00
+                <Clock className="w-4 h-4" /> Jueves a Domingo de 18:30 – 22:00
               </div>
             </div>
           </motion.div>
@@ -438,7 +438,7 @@ export default function App() {
       </section>
 
       {/* Buscador y categorías */}
-      <section id="menu" className="max-w-7xl mx-auto px-4 py-6">
+      <section id="menu" className="max-w-7xl mx-auto px-4 py-0.10">
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
           <div className="flex items-center gap-2 flex-1 px-4 py-3 rounded-2xl border border-black/10 bg-white/70">
             <Search className="w-5 h-5 opacity-70" />
