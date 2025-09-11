@@ -451,14 +451,7 @@ Total: ${currency(total)}`
               </motion.a>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-100">
-              <div className="flex items-center gap-2">
-                <MapPin className="w-6 h-6" /> Guayaquil - Pancho Jacome
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-6 h-6" /> Jueves a Domingo de 18:30 – 22:00
-              </div>
-
+            <div className="mt-7 flex flex-wrap gap-4 text-sm opacity-100">
               <div className="flex items-center gap-2">
                 <motion.a
                   whileHover={{ scale: 1, rotate: -5 }}
@@ -467,10 +460,18 @@ Total: ${currency(total)}`
                   rel="noreferrer"
                   //className=" text-white bg-red-600 rounded-full">
 
-                  className="absolute top 2 right 5 items-center justify-center px-3 py-3 text-xs font-bold leading-none bg-orange-500 text-white shadow font-semibold hidden sm:block"
+                  className="absolute top 2 left 5 items-center px-4 py-4 rounded-xl text-xs font-bold leading-none bg-orange-500 text-white shadow font-bold hidden sm:block"
                 >
                   Síguenos en TikTok
                 </motion.a>
+              </div>
+            </div>
+            <div className="mt-7   flex flex-wrap gap-4 text-sm opacity-100">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-6 h-6" /> Guayaquil - Pancho Jacome
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-6 h-6" /> Jueves a Domingo de 18:30 – 22:00
               </div>
             </div>
           </motion.div>
@@ -491,9 +492,9 @@ Total: ${currency(total)}`
       </section>
 
       {/* Buscador y categorías */}
-      <section id="menu" className="max-w-7xl mx-auto px-4 py-0.10">
+      <section id="menu" className="max-w-7xl mx-auto px-4 py-10">
         <div className="flex flex-col md:flex-row gap-3 md:items-center">
-          <div className="flex items-center gap-2 flex-1 px-4 py-3 rounded-2xl border border-black/10 bg-white/70">
+          <div className="flex items-center gap-2 flex-1 px-4 py-4 rounded-2xl border border-black/10 bg-white/70">
             <Search className="w-5 h-5 opacity-70" />
             <input
               placeholder="Buscar en el menú..."
