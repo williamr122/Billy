@@ -467,7 +467,7 @@ Total: ${currency(total)}`
                   rel="noreferrer"
                   //className=" text-white bg-red-600 rounded-full">
 
-                  className="absolute -top 1 -right-0.5 items-center justify-center px-3 py-3 text-xs font-bold leading-none bg-orange-500 text-white shadow font-semibold hidden sm:block"
+                  className="absolute top 2 right 5 items-center justify-center px-3 py-3 text-xs font-bold leading-none bg-orange-500 text-white shadow font-semibold hidden sm:block"
                 >
                   Síguenos en TikTok
                 </motion.a>
