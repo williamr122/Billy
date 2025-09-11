@@ -455,12 +455,12 @@ Total: ${currency(total)}`
               <div className="flex items-center gap-2">
                 <motion.a
                   whileHover={{ scale: 1.05 }}
-                  href={whatsappLink}
+                  href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
                   target="_blank"
                   rel="noreferrer"
                   className="px-3 py-3 rounded-xl border border-black/100 flex items-center gap-2"
                 >
-                  <Phone className="w-5 h-5" /> Ordenar por WhatsApp
+                  Síguenos en TikTok
                 </motion.a>
               </div>
             </div>
