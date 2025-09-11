@@ -397,25 +397,15 @@ Total: ${currency(total)}`
             Billy Burger
           </h1>
 
-          <motion.a
-            whileHover={{ scale: 1, rotate: -5 }}
-            href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
-            target="_blank"
-            rel="noreferrer"
-            className="ml-2 px-30 py-2 rounded-xl bg-red-500 text-white shadow font-semibold hidden sm:block"
-          >
-            Síguenos en TikTok
-          </motion.a>
-
           <div className="ml-auto flex items-center gap-2">
             <motion.button
               whileHover={{ scale: 1.05 }}
               onClick={() => setOpenCart(true)}
-              className="relative flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white shadow"
+              className="relative flex items-center gap-2 px-8 py-2 rounded-xl bg-black text-white shadow"
               aria-label={`Abrir carrito, ${totalItems} artículos`}
             >
-              <ShoppingCart className="w-7 h-7" />
-              <span className="ml-2 hidden sm:inline">Carrito</span>
+              <ShoppingCart className="w-8 h-7" />
+              <span className="ml-8 hidden sm:inline">Carrito</span>
 
               {/* Badge visible en móvil y escritorio */}
               {totalItems > 0 && (
@@ -446,7 +436,7 @@ Total: ${currency(total)}`
               <motion.a
                 whileHover={{ scale: 1.05 }}
                 href="#menu"
-                className="px-5 py-3 rounded-xl bg-black text-white shadow"
+                className="px-3 py-3 rounded-xl bg-black text-white shadow"
               >
                 Ver menú
               </motion.a>
@@ -455,9 +445,18 @@ Total: ${currency(total)}`
                 href={whatsappLink}
                 target="_blank"
                 rel="noreferrer"
-                className="px-5 py-3 rounded-xl border border-black/100 flex items-center gap-2"
+                className="px-3 py-3 rounded-xl border border-black/100 flex items-center gap-2"
               >
-                <Phone className="w-6 h-6" /> Ordenar por WhatsApp
+                <Phone className="w-5 h-5" /> Ordenar por WhatsApp
+              </motion.a>
+              <motion.a
+                whileHover={{ scale: 1, rotate: -5 }}
+                href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
+                target="_blank"
+                rel="noreferrer"
+                className="ml-2 px-2 py-2 rounded-xl bg-red-500 text-white shadow font-semibold hidden sm:block"
+              >
+                Síguenos en TikTok
               </motion.a>
             </div>
 
