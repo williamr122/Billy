@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ShoppingCart,
@@ -23,7 +23,6 @@ const CATEGORIES = [
   { id: "hamburguesas", label: "Hamburguesas" },
   { id: "papasfritas", label: "Papas" },
   { id: "alitas", label: "Alitas" },
-  //{ id: "papas", label: "Papas con tocino" },
   { id: "extras", label: "Extras" },
 ];
 
@@ -182,7 +181,8 @@ function CategoryPill({ active, label, onClick }) {
       whileHover={{ scale: 1.05 }}
       onClick={onClick}
       className={`
-        px-4 py-2 rounded-full text-sm transition-all border flex items-center gap-2 ${
+        px-4 py-2 rounded-full text-sm transition-all border flex items-center gap-2 whitespace-nowrap
+        ${
           active
             ? "bg-black text-white border-transparent shadow"
             : "bg-white/70 hover:bg-white border-black/10"
@@ -238,6 +238,7 @@ function ProductDetailsModal({ product, onClose, onAdd }) {
         <button
           className="absolute top-4 right-4 text-red-800 hover:text-red-400"
           onClick={onClose}
+          aria-label="Cerrar detalles"
         >
           <X size={35} />
         </button>
@@ -281,6 +282,37 @@ export default function App() {
   const [cart, setCart] = useState({});
   const [openCart, setOpenCart] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detectar tamaño de pantalla para animaciones/responsividad
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const onResize = () => setIsMobile(window.innerWidth < 768);
+    onResize();
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // Cargar carrito desde localStorage (útil en móvil y para debug)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const stored = localStorage.getItem("bb_cart");
+      if (stored) setCart(JSON.parse(stored));
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // Persistir carrito en localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      localStorage.setItem("bb_cart", JSON.stringify(cart));
+    } catch (e) {
+      // ignore
+    }
+  }, [cart]);
 
   // ==========================
   // Funciones carrito
@@ -329,18 +361,26 @@ export default function App() {
     );
   }, [query, cat]);
 
-  const items = Object.values(cart);
-  const subtotal = items.reduce((s, it) => s + it.qty * it.product.price, 0);
-  const totalItems = items.reduce((sum, it) => sum + it.qty, 0);
+  const items = useMemo(() => Object.values(cart), [cart]);
+  const subtotal = useMemo(
+    () => items.reduce((s, it) => s + it.qty * it.product.price, 0),
+    [items]
+  );
   const delivery = subtotal > 0 ? 0 : 0;
   const total = subtotal + delivery;
+  const totalItems = useMemo(
+    () => items.reduce((sum, it) => sum + it.qty, 0),
+    [items]
+  );
 
   const whatsappText = encodeURIComponent(
-    `Hola Billy Burgers! Quiero hacer este pedido:\n\n${items
-      .map(
-        (i) => `• ${i.qty} x ${i.product.name} (${currency(i.product.price)})`
-      )
-      .join("\n")}\n\nTotal: ${currency(total)}`
+    `Hola Billy Burgers! Quiero hacer este pedido:
+
+${items
+  .map((i) => `• ${i.qty} x ${i.product.name} (${currency(i.product.price)})`)
+  .join("")}
+
+Total: ${currency(total)}`
   );
   const whatsappLink = `https://wa.me/593984097456?text=${whatsappText}`;
 
@@ -357,13 +397,12 @@ export default function App() {
             Billy Burger
           </h1>
 
-          {/* Enlace a TikTok */}
           <motion.a
             whileHover={{ scale: 1.1, rotate: -5 }}
             href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
             target="_blank"
             rel="noreferrer"
-            className="ml-4 px-3 py-2 rounded-xl bg-red-500 text-white shadow font-semibold"
+            className="ml-4 px-3 py-2 rounded-xl bg-red-500 text-white shadow font-semibold hidden sm:block"
           >
             Síguenos en TikTok
           </motion.a>
@@ -372,9 +411,19 @@ export default function App() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               onClick={() => setOpenCart(true)}
-              className="flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white shadow"
+              className="relative flex items-center gap-2 px-3 py-2 rounded-xl bg-black text-white shadow"
+              aria-label={`Abrir carrito, ${totalItems} artículos`}
             >
-              <ShoppingCart className="w-7 h-7" /> Carrito ({totalItems})
+              <ShoppingCart className="w-7 h-7" />
+              <span className="ml-2 hidden sm:inline">Carrito</span>
+              <span className="ml-1 font-bold">({totalItems})</span>
+
+              {/* Badge visible en móvil y escritorio (mejor visibilidad en pantallas pequeñas) */}
+              {totalItems > 0 && (
+                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </motion.button>
           </div>
         </div>
@@ -388,7 +437,7 @@ export default function App() {
             animate={{ x: 0, opacity: 1 }}
             transition={{ duration: 0.7 }}
           >
-            <h2 className="text-4xl md:text-5xl font-black leading-tight">
+            <h2 className="text-3xl md:text-5xl font-black leading-tight">
               <span className="text-orange-600">
                 La combinación perfecta: Hamburguesa con papas.
               </span>
@@ -413,7 +462,7 @@ export default function App() {
               </motion.a>
             </div>
 
-            <div className="mt-4 flex items-center gap-4 text-sm opacity-80">
+            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-80">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4" /> Guayaquil - Pancho Jacome
               </div>
@@ -560,22 +609,27 @@ export default function App() {
             onClick={() => setOpenCart(false)}
           >
             <motion.aside
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              initial={isMobile ? { y: "100%" } : { x: "100%" }}
+              animate={isMobile ? { y: 0 } : { x: 0 }}
+              exit={isMobile ? { y: "100%" } : { x: "100%" }}
               transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className="ml-auto w-full max-w-md bg-white h-full shadow-2xl p-6 flex flex-col"
+              className="ml-auto w-full md:max-w-md bg-white h-[70vh] md:h-full shadow-2xl p-6 flex flex-col rounded-t-3xl md:rounded-none"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-black">Tu carrito</h2>
-                <button
-                  onClick={() => setOpenCart(false)}
-                  className="p-2 rounded-full hover:bg-black/5 transition"
-                  aria-label="Cerrar carrito"
-                >
-                  <X className="w-5 h-5" />
-                </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm opacity-70">
+                    {totalItems} artículo{totalItems !== 1 ? "s" : ""}
+                  </span>
+                  <button
+                    onClick={() => setOpenCart(false)}
+                    className="p-2 rounded-full hover:bg-black/5 transition"
+                    aria-label="Cerrar carrito"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
 
               {items.length === 0 ? (
