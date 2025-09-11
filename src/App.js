@@ -454,7 +454,7 @@ Total: ${currency(total)}`
             <div className="mt-7 flex flex-wrap gap-4 text-sm opacity-100">
               <div className="flex items-center gap-2">
                 <motion.a
-                  whileHover={{ scale: 1, rotate: -5 }}
+                  whileHover={{ scale: 1.05 }}
                   href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
                   target="_blank"
                   rel="noreferrer"
