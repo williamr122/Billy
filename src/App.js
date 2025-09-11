@@ -405,7 +405,7 @@ Total: ${currency(total)}`
               aria-label={`Abrir carrito, ${totalItems} artículos`}
             >
               <ShoppingCart className="w-7 h-7" />
-              <span className="ml-11 hidden sm:inline">Carrito</span>
+              <span className="ml-8 hidden sm:inline">Carrito</span>
 
               {/* Badge visible en móvil y escritorio */}
               {totalItems > 0 && (
@@ -427,7 +427,7 @@ Total: ${currency(total)}`
             transition={{ duration: 0.7 }}
           >
             <h2 className="text-3xl md:text-5xl font-black leading-tight">
-              <span className="text-orange-600">
+              <span className="text-orange-500">
                 La combinación perfecta: Hamburguesa con papas.
               </span>
             </h2>
@@ -452,7 +452,14 @@ Total: ${currency(total)}`
             </div>
 
             <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-100">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-6 h-6" /> Guayaquil - Pancho Jacome
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock className="w-6 h-6" /> Jueves a Domingo de 18:30 – 22:00
+              </div>
+
+              <div className="flex items-center gap-2">
                 <motion.a
                   whileHover={{ scale: 1, rotate: -5 }}
                   href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
@@ -462,13 +469,6 @@ Total: ${currency(total)}`
                 >
                   Síguenos en TikTok
                 </motion.a>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <MapPin className="w-6 h-6" /> Guayaquil - Pancho Jacome
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="w-6 h-6" /> Jueves a Domingo de 18:30 – 22:00
               </div>
             </div>
           </motion.div>
