@@ -465,7 +465,9 @@ Total: ${currency(total)}`
                   href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
                   target="_blank"
                   rel="noreferrer"
-                  className="ml 1 px-3 py-3 rounded-xl bg-orange-500 text-white shadow font-semibold hidden sm:block"
+                  //className=" text-white bg-red-600 rounded-full">
+
+                  className="absolute -top 1 -right-0.5 items-center justify-center px-3 py-3 text-xs font-bold leading-none bg-orange-500 text-white shadow font-semibold hidden sm:block"
                 >
                   Síguenos en TikTok
                 </motion.a>
