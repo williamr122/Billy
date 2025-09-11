@@ -392,17 +392,17 @@ Total: ${currency(total)}`
       {/* Barra superior */}
       <header className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-black/10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Sparkles className="w-7 h-7" />
+          <Sparkles className="w-5 h-5  " />
           <h1 className="text-xl font-extrabold tracking-tight">
             Billy Burger
           </h1>
 
           <motion.a
-            whileHover={{ scale: 1.1, rotate: -5 }}
+            whileHover={{ scale: 1, rotate: -5 }}
             href="https://www.tiktok.com/@burgerlovers_12?is_from_webapp=1&sender_device=pc"
             target="_blank"
             rel="noreferrer"
-            className="ml-4 px-3 py-2 rounded-xl bg-red-500 text-white shadow font-semibold hidden sm:block"
+            className="ml-2 px-30 py-2 rounded-xl bg-red-500 text-white shadow font-semibold hidden sm:block"
           >
             Síguenos en TikTok
           </motion.a>
@@ -416,11 +416,10 @@ Total: ${currency(total)}`
             >
               <ShoppingCart className="w-7 h-7" />
               <span className="ml-2 hidden sm:inline">Carrito</span>
-              <span className="ml-1 font-bold">({totalItems})</span>
 
-              {/* Badge visible en móvil y escritorio (mejor visibilidad en pantallas pequeñas) */}
+              {/* Badge visible en móvil y escritorio */}
               {totalItems > 0 && (
-                <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
+                <span className="absolute -top 1 -right-0.5 inline-flex items-center justify-center px-3 py-3 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                   {totalItems}
                 </span>
               )}
@@ -431,7 +430,7 @@ Total: ${currency(total)}`
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-7 grid md:grid-cols-2 gap-8 items-center">
+        <div className="max-w-7xl mx-auto px-4 py-6 grid md:grid-cols-2 gap-8 items-center">
           <motion.div
             initial={{ x: -50, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
@@ -456,18 +455,18 @@ Total: ${currency(total)}`
                 href={whatsappLink}
                 target="_blank"
                 rel="noreferrer"
-                className="px-5 py-3 rounded-xl border border-black/10 flex items-center gap-2"
+                className="px-5 py-3 rounded-xl border border-black/100 flex items-center gap-2"
               >
-                <Phone className="w-4 h-4" /> Ordenar por WhatsApp
+                <Phone className="w-6 h-6" /> Ordenar por WhatsApp
               </motion.a>
             </div>
 
-            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-80">
+            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-100">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4" /> Guayaquil - Pancho Jacome
+                <MapPin className="w-6 h-6" /> Guayaquil - Pancho Jacome
               </div>
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4" /> Jueves a Domingo de 18:30 – 22:00
+                <Clock className="w-6 h-6" /> Jueves a Domingo de 18:30 – 22:00
               </div>
             </div>
           </motion.div>
