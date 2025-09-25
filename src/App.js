@@ -378,7 +378,7 @@ export default function App() {
 
 ${items
   .map((i) => `• ${i.qty} x ${i.product.name} (${currency(i.product.price)})`)
-  .join("")}
+  .join("\n")}
 
 Total: ${currency(total)}`
   );
