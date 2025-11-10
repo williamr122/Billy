@@ -431,6 +431,11 @@ Total: ${currency(total)}`
                 La combinación perfecta: Hamburguesa con papas.
               </span>
             </h2>
+            <img
+              src="/animacion.gif"
+              alt="Efecto decorativo"
+              className="absolute top-36 right-[52%] w-60 h-auto z-10 pointer-events-none"
+            />
 
             <div className="mt-6 flex flex-wrap gap-3">
               <motion.a

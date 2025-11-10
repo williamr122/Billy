@@ -36,3 +36,15 @@
     transform: rotate(360deg);
   }
 }
+
+.gif-decorativo {
+  position: absolute;
+  top: 140px; /* ajusta según necesites */
+  left: 600px; /* ajusta la ubicación */
+  width: 150px;
+  height: auto;
+  z-index: 2;
+}
+.promo {
+  position: relative;
+}
