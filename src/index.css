@@ -1,3 +1,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* =====================================================
+   BILLY BURGERS — GLOBAL STYLES
+   ===================================================== */
+:root {
+  --bb-bg: #0f0a00;
+  --bb-surface: #1a1208;
+  --bb-card: #231800;
+  --bb-card-hover: #2e2005;
+  --bb-orange: #ff6b00;
+  --bb-orange-glow: rgba(255, 107, 0, 0.35);
+  --bb-amber: #ffa726;
+  --bb-gold: #ffd54f;
+  --bb-text: #fff8ee;
+  --bb-muted: rgba(255, 248, 238, 0.55);
+  --bb-border: rgba(255, 107, 0, 0.18);
+  --bb-glass: rgba(255, 255, 255, 0.04);
+  --bb-font: "Outfit", "Inter", sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--bb-font);
+  background: var(--bb-bg);
+  color: var(--bb-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bb-surface); }
+::-webkit-scrollbar-thumb { background: var(--bb-orange); border-radius: 3px; }
+
+/* Focus visible */
+:focus-visible {
+  outline: 2px solid var(--bb-orange);
+  outline-offset: 3px;
+}
+
+/* Selection */
+::selection {
+  background: var(--bb-orange);
+  color: #fff;
+}

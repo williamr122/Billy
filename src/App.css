@@ -1,42 +1,395 @@
-.App {
-  text-align: center;
+/* App.css — Billy Burgers premium component styles */
+
+/* ── Noise texture overlay ── */
+.bb-noise::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
 }
 
-.App-logo {
-  height: 40vmin;
+/* ── Animated gradient blob bg ── */
+.bb-bg-blobs {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.bb-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  opacity: 0.18;
+  animation: bb-blob-float 12s ease-in-out infinite alternate;
+}
+.bb-blob-1 {
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, #ff6b00, transparent 70%);
+  top: -150px; left: -150px;
+  animation-delay: 0s;
+}
+.bb-blob-2 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, #ffa726, transparent 70%);
+  bottom: -100px; right: -100px;
+  animation-delay: -6s;
+}
+.bb-blob-3 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, #ff3d00, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  animation-delay: -3s;
+}
+@keyframes bb-blob-float {
+  0%   { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(40px, 30px) scale(1.12); }
+}
+
+/* ── Header ── */
+.bb-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: rgba(15, 10, 0, 0.75);
+  border-bottom: 1px solid rgba(255, 107, 0, 0.18);
+}
+
+/* ── Glass card ── */
+.bb-card {
+  background: rgba(35, 24, 0, 0.75);
+  border: 1px solid rgba(255, 107, 0, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+.bb-card:hover {
+  border-color: rgba(255, 107, 0, 0.55);
+  box-shadow: 0 0 32px rgba(255, 107, 0, 0.18), 0 8px 32px rgba(0,0,0,0.5);
+  transform: translateY(-4px) scale(1.012);
+}
+
+/* ── Badge: Más vendido ── */
+.bb-badge-hot {
+  background: linear-gradient(135deg, #ff6b00, #ff3d00);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 999px;
+  box-shadow: 0 0 12px rgba(255, 107, 0, 0.6);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Pill / category button ── */
+.bb-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  background: rgba(255, 107, 0, 0.07);
+  color: rgba(255, 248, 238, 0.7);
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+.bb-pill:hover {
+  border-color: rgba(255, 107, 0, 0.6);
+  color: #fff;
+  background: rgba(255, 107, 0, 0.15);
+}
+.bb-pill.active {
+  background: linear-gradient(135deg, #ff6b00, #ffa726);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.45);
+}
+
+/* ── Search bar ── */
+.bb-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 107, 0, 0.07);
+  border: 1px solid rgba(255, 107, 0, 0.2);
+  border-radius: 999px;
+  padding: 10px 20px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.bb-search:focus-within {
+  border-color: rgba(255, 107, 0, 0.6);
+  box-shadow: 0 0 20px rgba(255, 107, 0, 0.2);
+}
+.bb-search input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff8ee;
+  font-family: inherit;
+  font-size: 0.95rem;
+  flex: 1;
+}
+.bb-search input::placeholder {
+  color: rgba(255, 248, 238, 0.4);
+}
+
+/* ── Primary button ── */
+.bb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+}
+.bb-btn-primary {
+  background: linear-gradient(135deg, #ff6b00, #ffa726);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(255, 107, 0, 0.4);
+}
+.bb-btn-primary:hover {
+  box-shadow: 0 6px 28px rgba(255, 107, 0, 0.6);
+  transform: translateY(-2px);
+}
+.bb-btn-ghost {
+  background: rgba(255, 107, 0, 0.1);
+  color: rgba(255, 248, 238, 0.85);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+}
+.bb-btn-ghost:hover {
+  background: rgba(255, 107, 0, 0.2);
+  border-color: rgba(255, 107, 0, 0.6);
+  color: #fff;
+}
+
+/* ── Hero ── */
+.bb-hero-title {
+  font-size: clamp(2.2rem, 5vw, 4.5rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.bb-hero-gradient {
+  background: linear-gradient(135deg, #ff6b00, #ffd54f 60%, #ffa726);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Price ── */
+.bb-price {
+  font-size: 1.4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ff6b00, #ffa726);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Cart aside ── */
+.bb-cart {
+  background: rgba(26, 18, 8, 0.98);
+  border-left: 1px solid rgba(255, 107, 0, 0.2);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+}
+
+/* ── Cart item ── */
+.bb-cart-item {
+  background: rgba(255, 107, 0, 0.06);
+  border: 1px solid rgba(255, 107, 0, 0.14);
+  border-radius: 16px;
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.25s;
+}
+.bb-cart-item:hover { border-color: rgba(255, 107, 0, 0.4); }
+
+/* ── WhatsApp button ── */
+.bb-wa-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 16px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-decoration: none;
+  background: linear-gradient(135deg, #25d366, #128c7e);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(37, 211, 102, 0.35);
+  transition: all 0.25s ease;
+}
+.bb-wa-btn:hover {
+  box-shadow: 0 6px 32px rgba(37, 211, 102, 0.5);
+  transform: translateY(-2px);
+}
+.bb-wa-btn.disabled {
+  opacity: 0.4;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ── Qty control ── */
+.bb-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.bb-qty-btn {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 107, 0, 0.12);
+  border: 1px solid rgba(255, 107, 0, 0.25);
+  color: #ff6b00;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.bb-qty-btn:hover {
+  background: rgba(255, 107, 0, 0.25);
+  border-color: rgba(255, 107, 0, 0.6);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+/* ── Modal ── */
+.bb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.bb-modal {
+  background: linear-gradient(160deg, #1e1400, #2a1a00);
+  border: 1px solid rgba(255, 107, 0, 0.3);
+  border-radius: 28px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 0 60px rgba(255, 107, 0, 0.25), 0 24px 64px rgba(0,0,0,0.7);
+}
+
+/* ── Stats strip ── */
+.bb-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  gap: 4px;
+  padding: 16px 24px;
+  border-right: 1px solid rgba(255, 107, 0, 0.12);
+}
+.bb-stat:last-child { border-right: none; }
+.bb-stat-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ff6b00;
+}
+.bb-stat-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 248, 238, 0.5);
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.promo {
+/* ── Section title ── */
+.bb-section-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.02em;
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.bb-section-title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #ff6b00, #ffa726);
+  margin-left: 4px;
+}
+
+/* ── Footer ── */
+.bb-footer {
+  border-top: 1px solid rgba(255, 107, 0, 0.12);
+  text-align: center;
+  padding: 32px 16px;
+  font-size: 0.8rem;
+  color: rgba(255, 248, 238, 0.35);
+}
+
+/* ── Floating cart pulse ── */
+@keyframes bb-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 0, 0.6); }
+  50%       { box-shadow: 0 0 0 10px rgba(255, 107, 0, 0); }
+}
+.bb-cart-pulse { animation: bb-pulse 2s infinite; }
+
+/* ── Shimmer loading ── */
+.bb-shimmer {
+  background: linear-gradient(90deg, rgba(255,107,0,0.05) 25%, rgba(255,107,0,0.12) 50%, rgba(255,107,0,0.05) 75%);
+  background-size: 200% 100%;
+  animation: bb-shimmer 1.6s infinite;
+}
+@keyframes bb-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Card image overlay ── */
+.bb-card-img-wrap {
+  position: relative;
+  overflow: hidden;
+}
+.bb-card-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(15,10,0,0.85) 0%, transparent 55%);
+  pointer-events: none;
+}
+.bb-card-img-wrap img {
+  transition: transform 0.5s ease;
+  display: block;
+  width: 100%;
+}
+.bb-card:hover .bb-card-img-wrap img {
+  transform: scale(1.06);
+}
+
+/* ── Responsive tweaks ── */
+@media (max-width: 640px) {
+  .bb-hero-title { font-size: 2.2rem; }
+  .bb-stat { padding: 12px 16px; }
+  .bb-stat-value { font-size: 1.2rem; }
 }
