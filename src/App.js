@@ -1,8 +1,21 @@
-import React, { useMemo, useState, useEffect } from "react";
+// ================================================================
+// App.js — Billy Burgers · Menú Digital
+// ================================================================
+// GUÍA PARA EDITAR FÁCILMENTE:
+//   • Agregar/quitar productos  → busca la sección PRODUCTS
+//   • Agregar/quitar categorías → busca la sección CATEGORIES
+//   • Cambiar número WhatsApp   → busca "wa.me/" y edita el número
+//   • Cambiar horario de atención → busca "Abierto Jue-Dom"
+//   • Cambiar link de TikTok    → busca "tiktok.com/@"
+//   • Cambiar precios           → edita el campo "price" de cada producto
+// ================================================================
+﻿import React, { useMemo, useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingCart, Search, Phone, MapPin, Clock, Minus, Plus, Trash2, ChevronRight, X, Flame, Star } from "lucide-react";
 import "./App.css";
 
+// ── CATEGORÍAS ─────────────────────────────────────────────
+// El campo "id" debe coincidir exactamente con "category" de cada producto.
 const CATEGORIES = [
   { id: "todos", label: "Todo" },
   { id: "hamburguesas", label: "Burgers" },
@@ -11,6 +24,9 @@ const CATEGORIES = [
   { id: "extras", label: "Extras" },
 ];
 
+// ── PRODUCTOS ──────────────────────────────────────────────
+// Cada entrada: { id, name, desc, price, category, img, badges }
+// badges: etiqueta especial, ej ["Más vendido"]. Usa [] si no aplica.
 const PRODUCTS = [
   { id: "Clasica", name: "Hamburguesa Clasica", desc: "Pan de finas hierbas + Carne + queso cheddar + salsa de tomate + mayonesa + lechuga + tomate + porcion de papas.", price: 3, category: "hamburguesas", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=800&auto=format&fit=crop", badges: [] },
   { id: "Bacon", name: "Hamburguesa Bacon", desc: "Pan de queso con oregano + carne + tocino + lechuga + tomate + mayonesa + salsa de tomate + lamina de mozzarella + huevo + porcion de papas.", price: 4, category: "hamburguesas", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop", badges: [] },
@@ -21,7 +37,6 @@ const PRODUCTS = [
   { id: "papaschili", name: "Papas Chili", desc: "Papas fritas + paprika + chili + jalapeno + cheddar.", price: 3.5, category: "papasfritas", img: "/i/papas chili.jpg", badges: [] },
   { id: "papasmix", name: "Papas Mix", desc: "Papas fritas + paprika + salchichas + chili + jalapeno + mayonesa + salsa de tomate + cheddar.", price: 4, category: "papasfritas", img: "/i/papas mix1.jpg", badges: [] },
   { id: "hotdog", name: "Hot Dog", desc: "Pan de hot dog + Salchicha + Tocino + Queso mozzarella + cheddar + Porcion de papas.", price: 2.5, category: "extras", img: "/i/hotdog.jpg", badges: [] },
-  { id: "nachos", name: "Nachos con Chili", desc: "Nachos + Chili + Jalapenos + cheddar.", price: 4, category: "extras", img: "/i/nachos con chili.jpg", badges: [] },
   { id: "arosCebolla", name: "Aros de Cebolla", desc: "8 Aros de cebolla + salsa BBQ + porcion de papas.", price: 2.5, category: "extras", img: "/i/Aros de cebolla.jpg", badges: [] },
   { id: "alitas6", name: "Alitas x 6", desc: "6 alitas con salsa BBQ o Honey mustard.", price: 5, category: "alitas", img: "/i/alitasx6.jpg", badges: [] },
   { id: "alitas12", name: "Alitas x 12", desc: "12 alitas con salsa BBQ o Honey mustard.", price: 8, category: "alitas", img: "/i/alitasx12.jpg", badges: [] },
@@ -110,6 +125,7 @@ export default function App() {
   const subtotal = useMemo(() => items.reduce((s, it) => s + it.qty * it.product.price, 0), [items]);
   const totalItems = useMemo(() => items.reduce((s, it) => s + it.qty, 0), [items]);
   const waText = encodeURIComponent(`Hola Billy Burgers! Quiero hacer este pedido:\n\n${items.map(i => `- ${i.qty}x ${i.product.name} (${fmt(i.product.price)})`).join("\n")}\n\nTotal: ${fmt(subtotal)}`);
+  // ⚠ Cambia el número de abajo si cambia el WhatsApp del negocio:
   const waLink = `https://wa.me/593984097456?text=${waText}`;
 
   const S = { position: "relative", zIndex: 1 };
@@ -149,7 +165,7 @@ export default function App() {
         <section style={{ ...maxW, padding: "60px 20px 40px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto", gap: 40, alignItems: "center" }}>
           <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7 }}>
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 999, padding: "6px 14px", fontSize: "0.8rem", fontWeight: 700, color: "var(--bb-orange)", marginBottom: 20 }}>
-              <Flame size={14} /> Abierto Jue-Dom � 18:30-22:00
+              <Flame size={14} /> Abierto Jue-Dom — 18:30-22:00
             </div>
             <h1 className="bb-hero-title">La <span className="bb-hero-gradient">hamburguesa</span><br />que mereces.</h1>
             <p style={{ marginTop: 16, fontSize: "1.05rem", color: "rgba(255,248,238,0.6)", maxWidth: 480, lineHeight: 1.7 }}>
@@ -179,7 +195,7 @@ export default function App() {
         {/* STATS */}
         <div style={{ ...maxW, padding: "0 20px 40px" }}>
           <div style={{ display: "flex", background: "rgba(255,107,0,0.06)", border: "1px solid rgba(255,107,0,0.14)", borderRadius: 20, overflow: "hidden", flexWrap: "wrap" }}>
-            {[["14+", "Productos"], ["4.9 ?", "Calidad"], ["$0", "Delivery"], ["~30min", "Espera"]].map(([v, l]) => (
+            {[["14+", "Productos"], ["4.9 ★", "Calidad"], ["A consultar", "Delivery"], ["~30min", "Espera"]].map(([v, l]) => (
               <div key={l} className="bb-stat"><span className="bb-stat-value">{v}</span><span className="bb-stat-label">{l}</span></div>
             ))}
           </div>
@@ -259,7 +275,7 @@ export default function App() {
             </div>
             <motion.a whileHover={{ scale: 1.05 }} href="https://www.tiktok.com/@burgerlovers_12" target="_blank" rel="noreferrer"
               className="bb-btn bb-btn-primary" style={{ textDecoration: "none" }}>
-              @burgerlovers_12 ?
+              @burgerlovers_12 🎵
             </motion.a>
           </div>
         </div>
@@ -267,7 +283,7 @@ export default function App() {
         {/* FOOTER */}
         <footer className="bb-footer">
           <img src="/logo_billy_burgerss.png" alt="Billy Burgers" style={{ width: 48, height: 48, borderRadius: "50%", objectFit: "cover", marginBottom: 12, border: "2px solid rgba(255,107,0,0.3)" }} />
-          <p style={{ margin: "0 0 4px" }}>2025 Billy Burgers � Guayaquil, Ecuador</p>
+          <p style={{ margin: "0 0 4px" }}>2025 Billy Burgers © Guayaquil, Ecuador</p>
           <p style={{ margin: 0 }}>Hecho con amor para los amantes de las burgers</p>
         </footer>
       </div>
@@ -326,11 +342,15 @@ export default function App() {
               )}
 
               <div style={{ borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16, marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-                {[["Subtotal", fmt(subtotal)], ["Delivery", "$0.00"]].map(([l, v]) => (
-                  <div key={l} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", color: "rgba(255,248,238,0.6)" }}>
-                    <span>{l}</span><span>{v}</span>
-                  </div>
-                ))}
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", color: "rgba(255,248,238,0.6)" }}>
+                  <span>Subtotal</span><span>{fmt(subtotal)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem", color: "rgba(255,248,238,0.45)", alignItems: "flex-start", gap: 8 }}>
+                  <span style={{ whiteSpace: "nowrap", fontStyle: "italic" }}>Delivery</span>
+                  <span style={{ textAlign: "right", lineHeight: 1.45, maxWidth: 180 }}>
+                    Varía según la zona de entrega.<br/>Se coordina al confirmar el pedido.
+                  </span>
+                </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: "1.15rem", marginTop: 4 }}>
                   <span>Total</span><span style={{ color: "var(--bb-orange)" }}>{fmt(subtotal)}</span>
                 </div>
