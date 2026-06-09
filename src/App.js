@@ -61,17 +61,11 @@ const EXTRAS_LIST = [
   { id: "carne", name: "Carne", price: 1.00 },
 ];
 
-const REMOVALS_LIST = [
-  { id: "cebolla", name: "Sin Cebolla Caramelizada" },
-  { id: "salsas", name: "Sin Salsas" },
-  { id: "vegetales", name: "Sin Vegetales" },
-];
 
 const fmt = (n) => `$${n.toFixed(2)}`;
 
 function Modal({ product, onClose, onAdd }) {
   const [selectedExtras, setSelectedExtras] = useState([]);
-  const [selectedRemovals, setSelectedRemovals] = useState([]);
 
   if (!product) return null;
 
@@ -80,14 +74,6 @@ function Modal({ product, onClose, onAdd }) {
       prev.some(e => e.id === extra.id) 
         ? prev.filter(e => e.id !== extra.id) 
         : [...prev, extra]
-    );
-  };
-
-  const toggleRemoval = (removalName) => {
-    setSelectedRemovals(prev => 
-      prev.includes(removalName)
-        ? prev.filter(r => r !== removalName)
-        : [...prev, removalName]
     );
   };
 
@@ -116,13 +102,13 @@ function Modal({ product, onClose, onAdd }) {
           <p style={{ marginTop: 12, color: "rgba(255,248,238,0.65)", lineHeight: 1.65 }}>{product.desc}</p>
           
           {/* PERSONALIZADOR DE INGREDIENTES INTERACTIVO - AGREGADO SEGÚN SOLICITUD */}
-          {/* NOTA PARA EDITAR: Este bloque permite añadir extras o quitar ingredientes solo a las hamburguesas */}
+          {/* NOTA PARA EDITAR: Este bloque permite añadir extras solo a las hamburguesas */}
           {product.category === "hamburguesas" && (
             <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16 }}>
               <p style={{ margin: "0 0 10px", fontSize: "0.85rem", fontWeight: 700, color: "var(--bb-orange)" }}>Personaliza tu Burger 🍔➕</p>
               
               {/* Extras */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                 <span style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.45)", fontWeight: 600 }}>Adicionales:</span>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                   {EXTRAS_LIST.map(ext => {
@@ -148,34 +134,6 @@ function Modal({ product, onClose, onAdd }) {
                   })}
                 </div>
               </div>
-
-              {/* Removals */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                <span style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.45)", fontWeight: 600 }}>Quitar ingredientes:</span>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-                  {REMOVALS_LIST.map(rem => {
-                    const isSelected = selectedRemovals.includes(rem.name);
-                    return (
-                      <button
-                        key={rem.id}
-                        onClick={() => toggleRemoval(rem.name)}
-                        style={{
-                          background: isSelected ? "rgba(255,61,0,0.12)" : "rgba(255,248,238,0.03)",
-                          border: isSelected ? "1px solid #ff3d00" : "1px solid rgba(255,248,238,0.1)",
-                          borderRadius: 8,
-                          padding: "5px 10px",
-                          fontSize: "0.72rem",
-                          color: isSelected ? "#ff8f8f" : "rgba(255,248,238,0.7)",
-                          cursor: "pointer",
-                          transition: "all 0.2s"
-                        }}
-                      >
-                        {rem.name}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
             </div>
           )}
 
@@ -183,7 +141,7 @@ function Modal({ product, onClose, onAdd }) {
             <span className="bb-price">{fmt(calculatedPrice)}</span>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
               className="bb-btn bb-btn-primary"
-              onClick={() => { onAdd(product, 1, selectedExtras, selectedRemovals); onClose(); }}>
+              onClick={() => { onAdd(product, 1, selectedExtras, []); onClose(); }}>
               <ShoppingCart size={18} /> Anadir al carrito
             </motion.button>
           </div>
@@ -589,12 +547,11 @@ export default function App() {
   useEffect(() => { try { localStorage.setItem("bb_cart", JSON.stringify(cart)); } catch {} }, [cart]);
 
   // NOTA PARA EDITAR: Función unificada de añadir productos al carrito.
-  // Admite cantidad, adicionales (extras) y exclusiones (removals).
+  // Admite cantidad y adicionales (extras).
   // Genera una clave única en base a las opciones seleccionadas para agruparlas de forma independiente.
-  const add = (p, qty = 1, extras = [], removals = []) => {
+  const add = (p, qty = 1, extras = []) => {
     const extrasKey = extras.map(e => e.name).sort().join(",");
-    const removalsKey = removals.sort().join(",");
-    const key = `${p.id}-${extrasKey}-${removalsKey}`;
+    const key = `${p.id}-${extrasKey}`;
     const calculatedPrice = p.price + extras.reduce((sum, e) => sum + e.price, 0);
 
     setCart(prev => {
@@ -608,7 +565,6 @@ export default function App() {
             baseId: p.id,
             price: calculatedPrice,
             customExtras: extras,
-            customRemovals: removals,
           }
         }
       };
@@ -641,9 +597,6 @@ export default function App() {
       let details = "";
       if (i.product.customExtras?.length > 0) {
         details += ` (+ ${i.product.customExtras.map(e => e.name).join(", ")})`;
-      }
-      if (i.product.customRemovals?.length > 0) {
-        details += ` (${i.product.customRemovals.join(", ")})`;
       }
       return `- ${i.qty}x ${i.product.name}${details} (${fmt(i.product.price)})`;
     }).join("\n");
@@ -894,12 +847,7 @@ export default function App() {
                               + {product.customExtras.map(e => e.name).join(", ")}
                             </div>
                           )}
-                          {/* Muestra las exclusiones seleccionadas */}
-                          {product.customRemovals?.length > 0 && (
-                            <div style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.4)", marginTop: 2, lineHeight: 1.2 }}>
-                              {product.customRemovals.join(", ")}
-                            </div>
-                          )}
+
                           <p style={{ margin: "3px 0 0", fontSize: "0.8rem", color: "rgba(255,248,238,0.5)" }}>{fmt(product.price * qty)}</p>
                         </div>
                         <QtyCtrl value={qty} onInc={() => inc(key)} onDec={() => dec(key)} />
