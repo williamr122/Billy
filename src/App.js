@@ -16,11 +16,13 @@ import "./App.css";
 
 // ── CATEGORÍAS ─────────────────────────────────────────────
 // El campo "id" debe coincidir exactamente con "category" de cada producto.
+// NOTA PARA EDITAR CATEGORÍAS: Puedes cambiar los nombres o añadir nuevas categorías aquí.
 const CATEGORIES = [
   { id: "todos", label: "Todo" },
   { id: "hamburguesas", label: "Burgers" },
   { id: "papasfritas", label: "Papas" },
   { id: "alitas", label: "Alitas" },
+  { id: "bebidas", label: "Bebidas" }, // <-- NUEVA CATEGORÍA DE BEBIDAS
   { id: "extras", label: "Extras" },
 ];
 
@@ -41,12 +43,56 @@ const PRODUCTS = [
   { id: "alitas6", name: "Alitas x 6", desc: "6 alitas con salsa BBQ o Honey mustard.", price: 5, category: "alitas", img: "/i/alitasx6.jpg", badges: [] },
   { id: "alitas12", name: "Alitas x 12", desc: "12 alitas con salsa BBQ o Honey mustard.", price: 8, category: "alitas", img: "/i/alitasx12.jpg", badges: [] },
   { id: "alitas24", name: "Alitas x 24", desc: "24 alitas con salsa BBQ o Honey mustard.", price: 15, category: "alitas", img: "/i/alitasx24.jpg", badges: [] },
+  // ── SECCIÓN DE BEBIDAS AGREGADAS ───────────────────────────
+  // NOTA PARA EDITAR PRECIOS O IMÁGENES:
+  // - Para cambiar el precio: modifica el número en "price" (ej. 0.50 o 1.25)
+  // - Para cambiar el nombre o la descripción: edita los campos "name" y "desc"
+  // - Para optimizar la carga del móvil, se usan URLs optimizadas de Unsplash para las bebidas.
+  { id: "cocacolapersonal", name: "Coca-Cola Personal", desc: "Coca-Cola clásica bien helada, presentación personal de 300ml.", price: 0.50, category: "bebidas", img: "i/Coca_cola_personal.jpg", badges: [] },
+  { id: "cocacola1l", name: "Coca-Cola 1 Litro", desc: "Coca-Cola clásica de 1 litro helada, ideal para acompañar tu combo favorito.", price: 1.25, category: "bebidas", img: "i/Coca_cola_1l.jpg", badges: [] },
+];
+
+// ── PERSONALIZACIÓN DE INGREDIENTES ────────────────────────
+// NOTA PARA EDITAR: Aquí puedes cambiar los precios de los ingredientes adicionales o añadir/quitar opciones.
+const EXTRAS_LIST = [
+  { id: "queso", name: "Queso Cheddar", price: 0.30 },
+  { id: "tocino", name: "Tocino Crujiente", price: 0.30 },
+  { id: "huevo", name: "Huevo Frito", price: 0.40 },
+  { id: "carne", name: "Carne", price: 1.00 },
+];
+
+const REMOVALS_LIST = [
+  { id: "cebolla", name: "Sin Cebolla Caramelizada" },
+  { id: "salsas", name: "Sin Salsas" },
+  { id: "vegetales", name: "Sin Vegetales" },
 ];
 
 const fmt = (n) => `$${n.toFixed(2)}`;
 
 function Modal({ product, onClose, onAdd }) {
+  const [selectedExtras, setSelectedExtras] = useState([]);
+  const [selectedRemovals, setSelectedRemovals] = useState([]);
+
   if (!product) return null;
+
+  const toggleExtra = (extra) => {
+    setSelectedExtras(prev => 
+      prev.some(e => e.id === extra.id) 
+        ? prev.filter(e => e.id !== extra.id) 
+        : [...prev, extra]
+    );
+  };
+
+  const toggleRemoval = (removalName) => {
+    setSelectedRemovals(prev => 
+      prev.includes(removalName)
+        ? prev.filter(r => r !== removalName)
+        : [...prev, removalName]
+    );
+  };
+
+  const calculatedPrice = product.price + selectedExtras.reduce((sum, e) => sum + e.price, 0);
+
   return (
     <div className="bb-modal-overlay" onClick={onClose}>
       <motion.div
@@ -57,8 +103,10 @@ function Modal({ product, onClose, onAdd }) {
         transition={{ type: "spring", stiffness: 280, damping: 22 }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="bb-card-img-wrap" style={{ height: 280 }}>
-          <img src={product.img} alt={product.name} style={{ height: 280, objectFit: "cover", width: "100%" }} />
+        <div style={{ height: 280, background: "rgba(10, 6, 0, 0.4)", display: "flex", justifyContent: "center", alignItems: "center", position: "relative" }}>
+          {/* NOTA DE RENDIMIENTO Y DISEÑO: Se removió la clase bb-card-img-wrap para quitar el degradado oscuro y se usa objectFit: "contain"
+              para mostrar la imagen completa y sin recortes (ideal para botellas y productos verticales) */}
+          <img src={product.img} alt={product.name} loading="lazy" style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain" }} />
         </div>
         <div style={{ padding: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -66,11 +114,76 @@ function Modal({ product, onClose, onAdd }) {
             <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,248,238,0.5)", cursor: "pointer" }}><X size={22} /></button>
           </div>
           <p style={{ marginTop: 12, color: "rgba(255,248,238,0.65)", lineHeight: 1.65 }}>{product.desc}</p>
+          
+          {/* PERSONALIZADOR DE INGREDIENTES INTERACTIVO - AGREGADO SEGÚN SOLICITUD */}
+          {/* NOTA PARA EDITAR: Este bloque permite añadir extras o quitar ingredientes solo a las hamburguesas */}
+          {product.category === "hamburguesas" && (
+            <div style={{ marginTop: 16, borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16 }}>
+              <p style={{ margin: "0 0 10px", fontSize: "0.85rem", fontWeight: 700, color: "var(--bb-orange)" }}>Personaliza tu Burger 🍔➕</p>
+              
+              {/* Extras */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 14 }}>
+                <span style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.45)", fontWeight: 600 }}>Adicionales:</span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {EXTRAS_LIST.map(ext => {
+                    const isSelected = selectedExtras.some(e => e.id === ext.id);
+                    return (
+                      <button
+                        key={ext.id}
+                        onClick={() => toggleExtra(ext)}
+                        style={{
+                          background: isSelected ? "rgba(255,107,0,0.15)" : "rgba(255,248,238,0.03)",
+                          border: isSelected ? "1px solid var(--bb-orange)" : "1px solid rgba(255,248,238,0.1)",
+                          borderRadius: 8,
+                          padding: "5px 10px",
+                          fontSize: "0.72rem",
+                          color: isSelected ? "#fff" : "rgba(255,248,238,0.7)",
+                          cursor: "pointer",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        + {ext.name} (+${ext.price.toFixed(2)})
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Removals */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                <span style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.45)", fontWeight: 600 }}>Quitar ingredientes:</span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {REMOVALS_LIST.map(rem => {
+                    const isSelected = selectedRemovals.includes(rem.name);
+                    return (
+                      <button
+                        key={rem.id}
+                        onClick={() => toggleRemoval(rem.name)}
+                        style={{
+                          background: isSelected ? "rgba(255,61,0,0.12)" : "rgba(255,248,238,0.03)",
+                          border: isSelected ? "1px solid #ff3d00" : "1px solid rgba(255,248,238,0.1)",
+                          borderRadius: 8,
+                          padding: "5px 10px",
+                          fontSize: "0.72rem",
+                          color: isSelected ? "#ff8f8f" : "rgba(255,248,238,0.7)",
+                          cursor: "pointer",
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        {rem.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
+
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 20 }}>
-            <span className="bb-price">{fmt(product.price)}</span>
+            <span className="bb-price">{fmt(calculatedPrice)}</span>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}
               className="bb-btn bb-btn-primary"
-              onClick={() => { onAdd(product); onClose(); }}>
+              onClick={() => { onAdd(product, 1, selectedExtras, selectedRemovals); onClose(); }}>
               <ShoppingCart size={18} /> Anadir al carrito
             </motion.button>
           </div>
@@ -90,6 +203,342 @@ function QtyCtrl({ value, onInc, onDec }) {
   );
 }
 
+// ── WIDGET MASCOTA FLOTANTE INTERACTIVA ────────────────────────
+// NOTA PARA EDITAR: Este componente crea el emoji de hamburguesa flotante.
+// - Puedes cambiar el emoji '🍔' por cualquier otro (ej. '🍟', '🥤', o un avatar).
+// - Puedes cambiar los mensajes que aparecen en la burbuja en la lista 'messages'.
+// - Puedes cambiar la posición modificando 'bottom' y 'left' o 'right' en el estilo CSS en línea.
+function FloatingMascot({ onSelectSpecial }) {
+  const [bubbleText, setBubbleText] = useState("¿Con hambre? 🍔 ¡Toca aquí para ver nuestra burger especial!");
+  const [showBubble, setShowBubble] = useState(true);
+
+  // Mensajes que rotan automáticamente en la burbuja de diálogo
+  useEffect(() => {
+    const messages = [
+      "¿Con hambre? 🍔 ¡Toca aquí para ver nuestra burger especial!",
+      "⚡ ¡Doble tocino, doble sabor! Pruébala hoy.",
+      "🥤 ¡Elige una Coca-Cola bien helada para acompañar!",
+      "✨ ¡El combo perfecto sí existe! ¿Qué esperas?",
+    ];
+    let idx = 0;
+    const interval = setInterval(() => {
+      idx = (idx + 1) % messages.length;
+      setBubbleText(messages[idx]);
+    }, 7000); // Cambia el mensaje cada 7 segundos
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div
+      style={{
+        position: "fixed",
+        bottom: 24,
+        left: 24, // Ubicación en la esquina inferior izquierda (para no tapar otros botones)
+        zIndex: 99,
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        cursor: "pointer",
+      }}
+      initial={{ scale: 0, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ delay: 1.5, type: "spring", stiffness: 260, damping: 20 }}
+      onClick={onSelectSpecial}
+    >
+      <AnimatePresence>
+        {showBubble && (
+          <motion.div
+            initial={{ opacity: 0, x: -15, scale: 0.8 }}
+            animate={{ opacity: 1, x: 0, scale: 1 }}
+            exit={{ opacity: 0, x: -15, scale: 0.8 }}
+            style={{
+              background: "rgba(30, 20, 5, 0.95)",
+              border: "1px solid var(--bb-orange)",
+              padding: "10px 16px",
+              borderRadius: "16px 16px 16px 4px",
+              boxShadow: "0 8px 24px rgba(0,0,0,0.5), 0 0 15px rgba(255,107,0,0.25)",
+              maxWidth: 200,
+              fontSize: "0.82rem",
+              color: "#fff8ee",
+              lineHeight: 1.4,
+              fontWeight: 600,
+              position: "relative",
+            }}
+          >
+            {bubbleText}
+            {/* Pequeño indicador para cerrar la burbuja si molesta */}
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowBubble(false);
+              }}
+              style={{
+                position: "absolute",
+                top: 4,
+                right: 4,
+                background: "none",
+                border: "none",
+                color: "rgba(255,248,238,0.4)",
+                fontSize: "0.7rem",
+                cursor: "pointer",
+                padding: 2,
+              }}
+            >
+              ✕
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Emoji con animación de flotación y sombra pulsante de color naranja */}
+      <motion.div
+        animate={{
+          y: [0, -8, 0],
+          boxShadow: [
+            "0 8px 24px rgba(255,107,0,0.4), 0 0 15px rgba(255,107,0,0.3)",
+            "0 8px 28px rgba(255,107,0,0.6), 0 0 25px rgba(255,107,0,0.5)",
+            "0 8px 24px rgba(255,107,0,0.4), 0 0 15px rgba(255,107,0,0.3)"
+          ]
+        }}
+        transition={{
+          y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
+          boxShadow: { repeat: Infinity, duration: 2, ease: "easeInOut" }
+        }}
+        whileHover={{ scale: 1.15, rotate: 8 }}
+        whileTap={{ scale: 0.95 }}
+        style={{
+          width: 56,
+          height: 56,
+          borderRadius: "50%",
+          background: "linear-gradient(135deg, #ff6b00, #ffa726)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          fontSize: "2rem",
+          position: "relative",
+        }}
+      >
+        🍔
+        {/* Anillo de brillo decorativo */}
+        <span style={{
+          position: "absolute",
+          inset: -3,
+          borderRadius: "50%",
+          border: "2px dashed rgba(255,255,255,0.4)",
+          opacity: 0.7,
+        }} />
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// ── RULETA DEL HAMBRE (WHEEL OF HUNGER) ──────────────────────
+// NOTA PARA EDITAR: Este componente crea la ruleta de la suerte.
+// - Modifica WHEEL_PRODUCTS si deseas sugerir otros productos.
+// - Puedes ajustar el número de vueltas o la animación en spinWheel.
+function WheelModal({ onClose, onAdd, triggerConfetti }) {
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [wheelWinner, setWheelWinner] = useState(null);
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [accumRotation, setAccumRotation] = useState(0);
+
+  // Seleccionamos 8 productos variados y populares para mostrar en la ruleta
+  const WHEEL_PRODUCTS = PRODUCTS.filter(p => ["Clasica", "Bacon", "Completa", "salchipapa", "papascheddar", "hotdog", "alitas6", "arosCebolla"].includes(p.id));
+
+  const spinWheel = () => {
+    if (isSpinning) return;
+    setIsSpinning(true);
+    setWheelWinner(null);
+
+    const randomIndex = Math.floor(Math.random() * WHEEL_PRODUCTS.length);
+    const sliceAngle = 360 / WHEEL_PRODUCTS.length;
+
+    // Acumulador de rotación para evitar efectos extraños al girar varias veces
+    const baseRotation = accumRotation - (accumRotation % 360);
+    const newRotation = baseRotation + 360 * 5 + (360 - (randomIndex * sliceAngle + sliceAngle / 2));
+    
+    setAccumRotation(newRotation);
+    setWheelRotation(newRotation);
+
+    setTimeout(() => {
+      setIsSpinning(false);
+      setWheelWinner(WHEEL_PRODUCTS[randomIndex]);
+      triggerConfetti();
+    }, 4100); // Duración de la animación en milisegundos
+  };
+
+  const gradientSegments = WHEEL_PRODUCTS.map((p, idx) => {
+    const angle = 360 / WHEEL_PRODUCTS.length;
+    const start = idx * angle;
+    const end = (idx + 1) * angle;
+    // Intercalamos dos colores temáticos en las rebanadas
+    const color = idx % 2 === 0 ? "rgba(255,107,0,0.85)" : "rgba(255,179,0,0.85)";
+    return `${color} ${start}deg ${end}deg`;
+  }).join(", ");
+
+  return (
+    <div className="bb-modal-overlay" onClick={onClose}>
+      <motion.div
+        className="bb-modal"
+        initial={{ opacity: 0, scale: 0.88, y: 20 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.88, y: 20 }}
+        onClick={(e) => e.stopPropagation()}
+        style={{ maxWidth: 420, padding: 24, display: "flex", flexDirection: "column", alignItems: "center" }}
+      >
+        <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+          <h2 style={{ fontSize: "1.4rem", fontWeight: 900, margin: 0 }}>🎡 Ruleta del Hambre</h2>
+          <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,248,238,0.5)", cursor: "pointer" }}><X size={22} /></button>
+        </div>
+
+        <p style={{ fontSize: "0.85rem", color: "rgba(255,248,238,0.6)", textAlign: "center", marginBottom: 24 }}>
+          ¿No sabes qué comer hoy? Deja que el destino elija tu menú favorito.
+        </p>
+
+        {/* Indicador de flecha en la parte superior */}
+        <div style={{ fontSize: "2rem", color: "var(--bb-orange)", transform: "translateY(12px)", zIndex: 10, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }}>
+          ▼
+        </div>
+
+        {/* Círculo de la Ruleta */}
+        <div style={{ position: "relative", width: 260, height: 260, marginBottom: 24 }}>
+          <div
+            style={{
+              width: 260,
+              height: 260,
+              borderRadius: "50%",
+              background: `conic-gradient(${gradientSegments})`,
+              position: "relative",
+              border: "6px solid rgba(255,107,0,0.3)",
+              boxShadow: "0 0 35px rgba(255,107,0,0.25), inset 0 0 20px rgba(0,0,0,0.5)",
+              transform: `rotate(${wheelRotation}deg)`,
+              transition: isSpinning ? "transform 4s cubic-bezier(0.1, 0.8, 0.2, 1)" : "none",
+            }}
+          >
+            {WHEEL_PRODUCTS.map((wp, idx) => {
+              const angle = 360 / WHEEL_PRODUCTS.length;
+              const rotateAngle = idx * angle + angle / 2;
+              return (
+                <div
+                  key={wp.id}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    transform: `rotate(${rotateAngle}deg)`,
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                    paddingTop: 22,
+                    color: "#fff",
+                    fontWeight: 900,
+                    fontSize: "0.68rem",
+                    textShadow: "0 2px 4px rgba(0,0,0,0.9)",
+                    pointerEvents: "none",
+                  }}
+                >
+                  <span style={{ transform: "rotate(90deg) translateX(5px)", display: "inline-block", whiteSpace: "nowrap" }}>
+                    {wp.name.replace("Hamburguesa ", "")}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Pin central de la ruleta */}
+          <div
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 44,
+              height: 44,
+              borderRadius: "50%",
+              background: "radial-gradient(circle, #ffd54f, #ff6b00)",
+              border: "3px solid #1e1400",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.5)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: "bold",
+              fontSize: "0.9rem",
+              zIndex: 5,
+            }}
+          >
+            🔥
+          </div>
+        </div>
+
+        {/* Sección de acciones e información del ganador */}
+        <div style={{ width: "100%", textAlign: "center" }}>
+          {!wheelWinner && (
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              disabled={isSpinning}
+              onClick={spinWheel}
+              className="bb-btn bb-btn-primary"
+              style={{ width: "80%", padding: "12px", justifyContent: "center" }}
+            >
+              {isSpinning ? "Girando la suerte..." : "¡GIRAR RULETA! 🎡"}
+            </motion.button>
+          )}
+
+          {wheelWinner && (
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{
+                background: "rgba(255,107,0,0.08)",
+                border: "1px solid rgba(255,107,0,0.25)",
+                borderRadius: 18,
+                padding: 16,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 12,
+              }}
+            >
+              <div style={{ fontSize: "0.8rem", color: "var(--bb-orange)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                🎉 ¡Tu menú ideal de hoy!
+              </div>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", justifyContent: "center" }}>
+                <img src={wheelWinner.img} alt={wheelWinner.name} style={{ width: 64, height: 64, borderRadius: 12, objectFit: "cover" }} />
+                <div style={{ textAlign: "left" }}>
+                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 800 }}>{wheelWinner.name}</h4>
+                  <span style={{ fontSize: "1rem", fontWeight: 900, color: "var(--bb-orange)", display: "block", marginTop: 2 }}>{fmt(wheelWinner.price)}</span>
+                </div>
+              </div>
+              <div style={{ display: "flex", gap: 8, width: "100%", marginTop: 4 }}>
+                <button
+                  className="bb-btn bb-btn-ghost"
+                  onClick={spinWheel}
+                  style={{ flex: 1, padding: "10px", fontSize: "0.85rem", justifyContent: "center" }}
+                >
+                  Girar de nuevo
+                </button>
+                <button
+                  className="bb-btn bb-btn-primary"
+                  onClick={() => {
+                    onAdd(wheelWinner);
+                    onClose();
+                  }}
+                  style={{ flex: 1, padding: "10px", fontSize: "0.85rem", justifyContent: "center" }}
+                >
+                  Agregar combo
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function App() {
   const [query, setQuery] = useState("");
   const [cat, setCat] = useState("todos");
@@ -97,6 +546,38 @@ export default function App() {
   const [openCart, setOpenCart] = useState(false);
   const [selected, setSelected] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+
+  // NUEVAS VARIABLES DE ESTADO PARA RULETA, MÉTODO DE PAGO Y CONFETTI
+  const [openWheel, setOpenWheel] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState("efectivo");
+  const [cashAmount, setCashAmount] = useState("");
+  const [confettis, setConfettis] = useState([]);
+
+  // NOTA PARA EDITAR: Callback que se ejecuta al presionar el emoji de hamburguesa flotante.
+  // Abre los detalles del producto estrella (id: "Completa", que es la Hamburguesa Completa).
+  const handleSelectSpecial = () => {
+    const special = PRODUCTS.find(p => p.id === "Completa");
+    if (special) {
+      setSelected(special);
+    }
+  };
+
+  // EFECTO DE CONFETI CELEBRATORIO (CONFETTI POP)
+  const triggerConfetti = () => {
+    const colors = ["#ff6b00", "#ffa726", "#ffd54f", "#ff3d00", "#4caf50", "#00e676", "#29b6f6"];
+    const newConfettis = Array.from({ length: 45 }).map((_, i) => ({
+      id: Math.random() + "-" + i,
+      x: Math.random() * 300 - 150, // dispersión horizontal
+      y: Math.random() * -200 - 100, // altura inicial del estallido
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 10 + 6,
+      rotate: Math.random() * 360,
+    }));
+    setConfettis(prev => [...prev, ...newConfettis]);
+    setTimeout(() => {
+      setConfettis(prev => prev.filter(c => !newConfettis.find(nc => nc.id === c.id)));
+    }, 2000);
+  };
 
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth < 768);
@@ -107,24 +588,80 @@ export default function App() {
   useEffect(() => { try { const s = localStorage.getItem("bb_cart"); if (s) setCart(JSON.parse(s)); } catch {} }, []);
   useEffect(() => { try { localStorage.setItem("bb_cart", JSON.stringify(cart)); } catch {} }, [cart]);
 
-  const add = (p) => setCart(prev => ({ ...prev, [p.id]: { qty: (prev[p.id]?.qty || 0) + 1, product: p } }));
-  const inc = (id) => setCart(prev => ({ ...prev, [id]: { ...prev[id], qty: prev[id].qty + 1 } }));
-  const dec = (id) => setCart(prev => {
-    if (!prev[id]) return prev;
-    if (prev[id].qty <= 1) { const { [id]: _, ...rest } = prev; return rest; }
-    return { ...prev, [id]: { ...prev[id], qty: prev[id].qty - 1 } };
+  // NOTA PARA EDITAR: Función unificada de añadir productos al carrito.
+  // Admite cantidad, adicionales (extras) y exclusiones (removals).
+  // Genera una clave única en base a las opciones seleccionadas para agruparlas de forma independiente.
+  const add = (p, qty = 1, extras = [], removals = []) => {
+    const extrasKey = extras.map(e => e.name).sort().join(",");
+    const removalsKey = removals.sort().join(",");
+    const key = `${p.id}-${extrasKey}-${removalsKey}`;
+    const calculatedPrice = p.price + extras.reduce((sum, e) => sum + e.price, 0);
+
+    setCart(prev => {
+      const existing = prev[key];
+      return {
+        ...prev,
+        [key]: {
+          qty: (existing?.qty || 0) + qty,
+          product: {
+            ...p,
+            baseId: p.id,
+            price: calculatedPrice,
+            customExtras: extras,
+            customRemovals: removals,
+          }
+        }
+      };
+    });
+    // Dispara el confeti al agregar
+    triggerConfetti();
+  };
+
+  const inc = (key) => setCart(prev => ({ ...prev, [key]: { ...prev[key], qty: prev[key].qty + 1 } }));
+  const dec = (key) => setCart(prev => {
+    if (!prev[key]) return prev;
+    if (prev[key].qty <= 1) { const { [key]: _, ...rest } = prev; return rest; }
+    return { ...prev, [key]: { ...prev[key], qty: prev[key].qty - 1 } };
   });
-  const remove = (id) => setCart(prev => { const { [id]: _, ...rest } = prev; return rest; });
+  const remove = (key) => setCart(prev => { const { [key]: _, ...rest } = prev; return rest; });
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return PRODUCTS.filter(p => (cat === "todos" || p.category === cat) && (!q || `${p.name} ${p.desc}`.toLowerCase().includes(q)));
   }, [query, cat]);
 
-  const items = useMemo(() => Object.values(cart), [cart]);
+  // Se mapea la clave del objeto para facilitar el manejo en bucles
+  const items = useMemo(() => Object.entries(cart).map(([k, val]) => ({ key: k, ...val })), [cart]);
   const subtotal = useMemo(() => items.reduce((s, it) => s + it.qty * it.product.price, 0), [items]);
   const totalItems = useMemo(() => items.reduce((s, it) => s + it.qty, 0), [items]);
-  const waText = encodeURIComponent(`Hola Billy Burgers! Quiero hacer este pedido:\n\n${items.map(i => `- ${i.qty}x ${i.product.name} (${fmt(i.product.price)})`).join("\n")}\n\nTotal: ${fmt(subtotal)}`);
+
+  // Mensaje final dinámico de WhatsApp configurado según el total de la orden, método de pago y vuelto
+  const waText = useMemo(() => {
+    const itemsText = items.map(i => {
+      let details = "";
+      if (i.product.customExtras?.length > 0) {
+        details += ` (+ ${i.product.customExtras.map(e => e.name).join(", ")})`;
+      }
+      if (i.product.customRemovals?.length > 0) {
+        details += ` (${i.product.customRemovals.join(", ")})`;
+      }
+      return `- ${i.qty}x ${i.product.name}${details} (${fmt(i.product.price)})`;
+    }).join("\n");
+
+    let paymentText = `\n- Método de Pago: `;
+    if (paymentMethod === "efectivo") {
+      paymentText += "Efectivo 💵";
+      const paid = parseFloat(cashAmount);
+      if (!isNaN(paid) && paid > subtotal) {
+        paymentText += ` (Paga con: ${fmt(paid)} - Vuelto: ${fmt(paid - subtotal)})`;
+      }
+    } else {
+      paymentText += "Transferencia 📱 (Se adjuntará comprobante)";
+    }
+
+    return encodeURIComponent(`Hola Billy Burgers! Quiero hacer este pedido:\n\n${itemsText}\n${paymentText}\n\nTotal: ${fmt(subtotal)}`);
+  }, [items, subtotal, paymentMethod, cashAmount]);
+
   // ⚠ Cambia el número de abajo si cambia el WhatsApp del negocio:
   const waLink = `https://wa.me/593984097456?text=${waText}`;
 
@@ -167,10 +704,12 @@ export default function App() {
             <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 999, padding: "6px 14px", fontSize: "0.8rem", fontWeight: 700, color: "var(--bb-orange)", marginBottom: 20 }}>
               <Flame size={14} /> Abierto Jue-Dom — 18:30-22:00
             </div>
-            <h1 className="bb-hero-title">La <span className="bb-hero-gradient">hamburguesa</span><br />que mereces.</h1>
-            <p style={{ marginTop: 16, fontSize: "1.05rem", color: "rgba(255,248,238,0.6)", maxWidth: 480, lineHeight: 1.7 }}>
-              Hecha con ingredientes frescos, sabor autentico y mucho amor desde Guayaquil.
-            </p>
+            {/* TÍTULO HERO - MODIFICADO SEGÚN SOLICITUD DEL USUARIO */}
+            {/* NOTA PARA EDITAR: Aquí se muestra el título principal de la página */}
+            <h1 className="bb-hero-title">
+              Tu hamburguesa favorita,<br />
+              <span className="bb-hero-gradient">siempre con papas.</span>
+            </h1>
             <div style={{ marginTop: 28, display: "flex", flexWrap: "wrap", gap: 12 }}>
               <motion.a whileHover={{ scale: 1.05 }} href="#menu" className="bb-btn bb-btn-primary" style={{ textDecoration: "none" }}>
                 <Star size={16} /> Ver menu completo
@@ -192,14 +731,8 @@ export default function App() {
           )}
         </section>
 
-        {/* STATS */}
-        <div style={{ ...maxW, padding: "0 20px 40px" }}>
-          <div style={{ display: "flex", background: "rgba(255,107,0,0.06)", border: "1px solid rgba(255,107,0,0.14)", borderRadius: 20, overflow: "hidden", flexWrap: "wrap" }}>
-            {[["14+", "Productos"], ["4.9 ★", "Calidad"], ["A consultar", "Delivery"], ["~30min", "Espera"]].map(([v, l]) => (
-              <div key={l} className="bb-stat"><span className="bb-stat-value">{v}</span><span className="bb-stat-label">{l}</span></div>
-            ))}
-          </div>
-        </div>
+        {/* STATS ELIMINADOS SEGÚN SOLICITUD */}
+        {/* NOTA PARA EDITAR: Si en el futuro deseas recuperar las estadísticas (14+ Productos, 4.9 Calidad, etc.), puedes reinsertar aquí la sección div de stats */}
 
         {/* MENU */}
         <section id="menu" style={{ ...maxW, padding: "0 20px 60px" }}>
@@ -216,6 +749,31 @@ export default function App() {
             </div>
           </div>
 
+          {/* BOTÓN LANZADOR DE LA RULETA DEL HAMBRE - AGREGADO SEGÚN SOLICITUD */}
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
+            <motion.button 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setOpenWheel(true)}
+              style={{
+                background: "linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,213,79,0.08))",
+                border: "1px solid rgba(255,107,0,0.45)",
+                borderRadius: 999,
+                padding: "10px 24px",
+                color: "#ffd54f",
+                fontSize: "0.88rem",
+                fontWeight: 800,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                boxShadow: "0 4px 20px rgba(255,107,0,0.15)"
+              }}
+            >
+              <span>🎡</span> ¿No sabes qué pedir? ¡Gira la Ruleta del Hambre!
+            </motion.button>
+          </div>
+
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24 }}>
             <AnimatePresence>
               {filtered.map(p => (
@@ -225,7 +783,8 @@ export default function App() {
                   className="bb-card" style={{ borderRadius: 24, overflow: "hidden", cursor: "pointer" }}
                   onClick={() => setSelected(p)}>
                   <div className="bb-card-img-wrap" style={{ height: 210 }}>
-                    <img src={p.img} alt={p.name} style={{ height: 210, objectFit: "cover", width: "100%" }} />
+                    {/* NOTA DE RENDIMIENTO: loading="lazy" es crucial para móviles, hace que las imágenes carguen conforme el usuario baja en el menú */}
+                    <img src={p.img} alt={p.name} loading="lazy" style={{ height: 210, objectFit: "cover", width: "100%" }} />
                     {p.badges.map(b => (
                       <span key={b} className="bb-badge-hot" style={{ position: "absolute", top: 12, left: 12, zIndex: 2 }}>?? {b}</span>
                     ))}
@@ -323,15 +882,28 @@ export default function App() {
               ) : (
                 <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
                   <AnimatePresence>
-                    {items.map(({ product, qty }) => (
-                      <motion.div key={product.id} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 40 }} className="bb-cart-item">
-                        <img src={product.img} alt={product.name} style={{ width: 60, height: 60, borderRadius: 12, objectFit: "cover" }} />
+                    {items.map(({ key, product, qty }) => (
+                      <motion.div key={key} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 40 }} className="bb-cart-item">
+                        {/* loading="lazy" para las imágenes pequeñas del carrito */}
+                        <img src={product.img} alt={product.name} loading="lazy" style={{ width: 60, height: 60, borderRadius: 12, objectFit: "cover" }} />
                         <div style={{ flex: 1 }}>
                           <p style={{ margin: 0, fontWeight: 700, fontSize: "0.9rem" }}>{product.name}</p>
+                          {/* Muestra los adicionales seleccionados */}
+                          {product.customExtras?.length > 0 && (
+                            <div style={{ fontSize: "0.72rem", color: "var(--bb-orange)", marginTop: 2, lineHeight: 1.2 }}>
+                              + {product.customExtras.map(e => e.name).join(", ")}
+                            </div>
+                          )}
+                          {/* Muestra las exclusiones seleccionadas */}
+                          {product.customRemovals?.length > 0 && (
+                            <div style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.4)", marginTop: 2, lineHeight: 1.2 }}>
+                              {product.customRemovals.join(", ")}
+                            </div>
+                          )}
                           <p style={{ margin: "3px 0 0", fontSize: "0.8rem", color: "rgba(255,248,238,0.5)" }}>{fmt(product.price * qty)}</p>
                         </div>
-                        <QtyCtrl value={qty} onInc={() => inc(product.id)} onDec={() => dec(product.id)} />
-                        <motion.button whileHover={{ scale: 1.1 }} onClick={() => remove(product.id)}
+                        <QtyCtrl value={qty} onInc={() => inc(key)} onDec={() => dec(key)} />
+                        <motion.button whileHover={{ scale: 1.1 }} onClick={() => remove(key)}
                           style={{ background: "rgba(255,61,0,0.12)", border: "1px solid rgba(255,61,0,0.25)", borderRadius: 8, padding: 7, color: "#ff6b6b", cursor: "pointer" }}>
                           <Trash2 size={14} />
                         </motion.button>
@@ -341,8 +913,87 @@ export default function App() {
                 </div>
               )}
 
-              <div style={{ borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16, marginTop: 16, display: "flex", flexDirection: "column", gap: 8 }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", color: "rgba(255,248,238,0.6)" }}>
+              <div style={{ borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16, marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+                {/* MÉTODO DE PAGO Y VUELTO - AGREGADO SEGÚN SOLICITUD */}
+                {items.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 6 }}>
+                    <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "rgba(255,248,238,0.85)" }}>Método de Pago:</span>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <button 
+                        onClick={() => setPaymentMethod("efectivo")}
+                        style={{
+                          flex: 1,
+                          padding: "8px 10px",
+                          borderRadius: 10,
+                          border: paymentMethod === "efectivo" ? "1px solid var(--bb-orange)" : "1px solid rgba(255,248,238,0.1)",
+                          background: paymentMethod === "efectivo" ? "rgba(255,107,0,0.12)" : "rgba(0,0,0,0.2)",
+                          color: paymentMethod === "efectivo" ? "#fff" : "rgba(255,248,238,0.6)",
+                          cursor: "pointer",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        💵 Efectivo
+                      </button>
+                      <button 
+                        onClick={() => setPaymentMethod("transferencia")}
+                        style={{
+                          flex: 1,
+                          padding: "8px 10px",
+                          borderRadius: 10,
+                          border: paymentMethod === "transferencia" ? "1px solid var(--bb-orange)" : "1px solid rgba(255,248,238,0.1)",
+                          background: paymentMethod === "transferencia" ? "rgba(255,107,0,0.12)" : "rgba(0,0,0,0.2)",
+                          color: paymentMethod === "transferencia" ? "#fff" : "rgba(255,248,238,0.6)",
+                          cursor: "pointer",
+                          fontSize: "0.75rem",
+                          fontWeight: 700,
+                          transition: "all 0.2s"
+                        }}
+                      >
+                        📱 Transferencia
+                      </button>
+                    </div>
+
+                    {paymentMethod === "efectivo" && (
+                      <div style={{ marginTop: 4, background: "rgba(255,107,0,0.05)", border: "1px solid rgba(255,107,0,0.15)", borderRadius: 12, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                        <label style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.65)", fontWeight: 600 }}>¿Con cuánto vas a pagar?</label>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ color: "var(--bb-orange)", fontWeight: 700, fontSize: "0.85rem" }}>$</span>
+                          <input 
+                            type="number" 
+                            step="0.01"
+                            placeholder="Ej: 10.00"
+                            value={cashAmount} 
+                            onChange={(e) => setCashAmount(e.target.value)}
+                            style={{
+                              background: "rgba(0,0,0,0.35)",
+                              border: "1px solid rgba(255,107,0,0.25)",
+                              borderRadius: 6,
+                              padding: "5px 8px",
+                              color: "#fff",
+                              fontSize: "0.8rem",
+                              width: "90px",
+                              outline: "none",
+                            }}
+                          />
+                        </div>
+                        {parseFloat(cashAmount) > subtotal && (
+                          <div style={{ fontSize: "0.78rem", color: "#4caf50", fontWeight: 700 }}>
+                            Su vuelto: {fmt(parseFloat(cashAmount) - subtotal)}
+                          </div>
+                        )}
+                        {parseFloat(cashAmount) <= subtotal && cashAmount !== "" && (
+                          <div style={{ fontSize: "0.7rem", color: "#ff6b6b", fontWeight: 700 }}>
+                            Debe ser mayor al total ({fmt(subtotal)}).
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", color: "rgba(255,248,238,0.6)", borderTop: "1px solid rgba(255,248,238,0.08)", paddingTop: 8 }}>
                   <span>Subtotal</span><span>{fmt(subtotal)}</span>
                 </div>
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem", color: "rgba(255,248,238,0.45)", alignItems: "flex-start", gap: 8 }}>
@@ -365,6 +1016,46 @@ export default function App() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* RULETA DEL HAMBRE MODAL */}
+      <AnimatePresence>
+        {openWheel && (
+          <WheelModal 
+            onClose={() => setOpenWheel(false)} 
+            onAdd={add} 
+            triggerConfetti={triggerConfetti} 
+          />
+        )}
+      </AnimatePresence>
+
+      {/* MASCOTA FLOTANTE INTERACTIVA - AGREGADO SEGÚN SOLICITUD */}
+      <FloatingMascot onSelectSpecial={handleSelectSpecial} />
+
+      {/* EFECTO DE CONFETI CELEBRATORIO (CONFETTI POP) - AGREGADO SEGÚN SOLICITUD */}
+      {confettis.map(c => (
+        <motion.div
+          key={c.id}
+          style={{
+            position: "fixed",
+            left: "50%",
+            top: "50%",
+            width: c.size,
+            height: c.size,
+            background: c.color,
+            borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+            zIndex: 9999,
+            pointerEvents: "none"
+          }}
+          initial={{ x: 0, y: 0, opacity: 1, rotate: 0 }}
+          animate={{
+            x: c.x * 2.5,
+            y: [c.y, c.y * 1.5, window.innerHeight * 0.75],
+            opacity: [1, 1, 0],
+            rotate: c.rotate + 720
+          }}
+          transition={{ duration: 1.8, ease: "easeOut" }}
+        />
+      ))}
     </div>
   );
 }
