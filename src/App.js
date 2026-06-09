@@ -56,9 +56,9 @@ const PRODUCTS = [
 // NOTA PARA EDITAR: Aquí puedes cambiar los precios de los ingredientes adicionales o añadir/quitar opciones.
 const EXTRAS_LIST = [
   { id: "queso", name: "Queso Cheddar", price: 0.30 },
+  { id: "mozzarella", name: "Queso Mozzarella", price: 0.30 },
   { id: "tocino", name: "Tocino Crujiente", price: 0.30 },
   { id: "huevo", name: "Huevo Frito", price: 0.40 },
-  { id: "carne", name: "Carne", price: 1.00 },
 ];
 
 
