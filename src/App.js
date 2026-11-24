@@ -161,341 +161,7 @@ function QtyCtrl({ value, onInc, onDec }) {
   );
 }
 
-// ── WIDGET MASCOTA FLOTANTE INTERACTIVA ────────────────────────
-// NOTA PARA EDITAR: Este componente crea el emoji de hamburguesa flotante.
-// - Puedes cambiar el emoji '🍔' por cualquier otro (ej. '🍟', '🥤', o un avatar).
-// - Puedes cambiar los mensajes que aparecen en la burbuja en la lista 'messages'.
-// - Puedes cambiar la posición modificando 'bottom' y 'left' o 'right' en el estilo CSS en línea.
-function FloatingMascot({ onSelectSpecial }) {
-  const [bubbleText, setBubbleText] = useState("¿Con hambre? 🍔 ¡Toca aquí para ver nuestra burger especial!");
-  const [showBubble, setShowBubble] = useState(true);
 
-  // Mensajes que rotan automáticamente en la burbuja de diálogo
-  useEffect(() => {
-    const messages = [
-      "¿Con hambre? 🍔 ¡Toca aquí para ver nuestra burger especial!",
-      "⚡ ¡Doble tocino, doble sabor! Pruébala hoy.",
-      "🥤 ¡Elige una Coca-Cola bien helada para acompañar!",
-      "✨ ¡El combo perfecto sí existe! ¿Qué esperas?",
-    ];
-    let idx = 0;
-    const interval = setInterval(() => {
-      idx = (idx + 1) % messages.length;
-      setBubbleText(messages[idx]);
-    }, 7000); // Cambia el mensaje cada 7 segundos
-    return () => clearInterval(interval);
-  }, []);
-
-  return (
-    <motion.div
-      style={{
-        position: "fixed",
-        bottom: 24,
-        left: 24, // Ubicación en la esquina inferior izquierda (para no tapar otros botones)
-        zIndex: 99,
-        display: "flex",
-        alignItems: "center",
-        gap: 12,
-        cursor: "pointer",
-      }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ delay: 1.5, type: "spring", stiffness: 260, damping: 20 }}
-      onClick={onSelectSpecial}
-    >
-      <AnimatePresence>
-        {showBubble && (
-          <motion.div
-            initial={{ opacity: 0, x: -15, scale: 0.8 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: -15, scale: 0.8 }}
-            style={{
-              background: "rgba(30, 20, 5, 0.95)",
-              border: "1px solid var(--bb-orange)",
-              padding: "10px 16px",
-              borderRadius: "16px 16px 16px 4px",
-              boxShadow: "0 8px 24px rgba(0,0,0,0.5), 0 0 15px rgba(255,107,0,0.25)",
-              maxWidth: 200,
-              fontSize: "0.82rem",
-              color: "#fff8ee",
-              lineHeight: 1.4,
-              fontWeight: 600,
-              position: "relative",
-            }}
-          >
-            {bubbleText}
-            {/* Pequeño indicador para cerrar la burbuja si molesta */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowBubble(false);
-              }}
-              style={{
-                position: "absolute",
-                top: 4,
-                right: 4,
-                background: "none",
-                border: "none",
-                color: "rgba(255,248,238,0.4)",
-                fontSize: "0.7rem",
-                cursor: "pointer",
-                padding: 2,
-              }}
-            >
-              ✕
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Emoji con animación de flotación y sombra pulsante de color naranja */}
-      <motion.div
-        animate={{
-          y: [0, -8, 0],
-          boxShadow: [
-            "0 8px 24px rgba(255,107,0,0.4), 0 0 15px rgba(255,107,0,0.3)",
-            "0 8px 28px rgba(255,107,0,0.6), 0 0 25px rgba(255,107,0,0.5)",
-            "0 8px 24px rgba(255,107,0,0.4), 0 0 15px rgba(255,107,0,0.3)"
-          ]
-        }}
-        transition={{
-          y: { repeat: Infinity, duration: 3, ease: "easeInOut" },
-          boxShadow: { repeat: Infinity, duration: 2, ease: "easeInOut" }
-        }}
-        whileHover={{ scale: 1.15, rotate: 8 }}
-        whileTap={{ scale: 0.95 }}
-        style={{
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: "linear-gradient(135deg, #ff6b00, #ffa726)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "2rem",
-          position: "relative",
-        }}
-      >
-        🍔
-        {/* Anillo de brillo decorativo */}
-        <span style={{
-          position: "absolute",
-          inset: -3,
-          borderRadius: "50%",
-          border: "2px dashed rgba(255,255,255,0.4)",
-          opacity: 0.7,
-        }} />
-      </motion.div>
-    </motion.div>
-  );
-}
-
-// ── RULETA DEL HAMBRE (WHEEL OF HUNGER) ──────────────────────
-// NOTA PARA EDITAR: Este componente crea la ruleta de la suerte.
-// - Modifica WHEEL_PRODUCTS si deseas sugerir otros productos.
-// - Puedes ajustar el número de vueltas o la animación en spinWheel.
-function WheelModal({ onClose, onAdd, triggerConfetti }) {
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [wheelWinner, setWheelWinner] = useState(null);
-  const [wheelRotation, setWheelRotation] = useState(0);
-  const [accumRotation, setAccumRotation] = useState(0);
-
-  // Seleccionamos 8 productos variados y populares para mostrar en la ruleta
-  const WHEEL_PRODUCTS = PRODUCTS.filter(p => ["Clasica", "Bacon", "Completa", "salchipapa", "papascheddar", "hotdog", "alitas6", "arosCebolla"].includes(p.id));
-
-  const spinWheel = () => {
-    if (isSpinning) return;
-    setIsSpinning(true);
-    setWheelWinner(null);
-
-    const randomIndex = Math.floor(Math.random() * WHEEL_PRODUCTS.length);
-    const sliceAngle = 360 / WHEEL_PRODUCTS.length;
-
-    // Acumulador de rotación para evitar efectos extraños al girar varias veces
-    const baseRotation = accumRotation - (accumRotation % 360);
-    const newRotation = baseRotation + 360 * 5 + (360 - (randomIndex * sliceAngle + sliceAngle / 2));
-    
-    setAccumRotation(newRotation);
-    setWheelRotation(newRotation);
-
-    setTimeout(() => {
-      setIsSpinning(false);
-      setWheelWinner(WHEEL_PRODUCTS[randomIndex]);
-      triggerConfetti();
-    }, 4100); // Duración de la animación en milisegundos
-  };
-
-  const gradientSegments = WHEEL_PRODUCTS.map((p, idx) => {
-    const angle = 360 / WHEEL_PRODUCTS.length;
-    const start = idx * angle;
-    const end = (idx + 1) * angle;
-    // Intercalamos dos colores temáticos en las rebanadas
-    const color = idx % 2 === 0 ? "rgba(255,107,0,0.85)" : "rgba(255,179,0,0.85)";
-    return `${color} ${start}deg ${end}deg`;
-  }).join(", ");
-
-  return (
-    <div className="bb-modal-overlay" onClick={onClose}>
-      <motion.div
-        className="bb-modal"
-        initial={{ opacity: 0, scale: 0.88, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.88, y: 20 }}
-        onClick={(e) => e.stopPropagation()}
-        style={{ maxWidth: 420, padding: 24, display: "flex", flexDirection: "column", alignItems: "center" }}
-      >
-        <div style={{ display: "flex", width: "100%", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
-          <h2 style={{ fontSize: "1.4rem", fontWeight: 900, margin: 0 }}>🎡 Ruleta del Hambre</h2>
-          <button onClick={onClose} style={{ background: "none", border: "none", color: "rgba(255,248,238,0.5)", cursor: "pointer" }}><X size={22} /></button>
-        </div>
-
-        <p style={{ fontSize: "0.85rem", color: "rgba(255,248,238,0.6)", textAlign: "center", marginBottom: 24 }}>
-          ¿No sabes qué comer hoy? Deja que el destino elija tu menú favorito.
-        </p>
-
-        {/* Indicador de flecha en la parte superior */}
-        <div style={{ fontSize: "2rem", color: "var(--bb-orange)", transform: "translateY(12px)", zIndex: 10, filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))" }}>
-          ▼
-        </div>
-
-        {/* Círculo de la Ruleta */}
-        <div style={{ position: "relative", width: 260, height: 260, marginBottom: 24 }}>
-          <div
-            style={{
-              width: 260,
-              height: 260,
-              borderRadius: "50%",
-              background: `conic-gradient(${gradientSegments})`,
-              position: "relative",
-              border: "6px solid rgba(255,107,0,0.3)",
-              boxShadow: "0 0 35px rgba(255,107,0,0.25), inset 0 0 20px rgba(0,0,0,0.5)",
-              transform: `rotate(${wheelRotation}deg)`,
-              transition: isSpinning ? "transform 4s cubic-bezier(0.1, 0.8, 0.2, 1)" : "none",
-            }}
-          >
-            {WHEEL_PRODUCTS.map((wp, idx) => {
-              const angle = 360 / WHEEL_PRODUCTS.length;
-              const rotateAngle = idx * angle + angle / 2;
-              return (
-                <div
-                  key={wp.id}
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    transform: `rotate(${rotateAngle}deg)`,
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "flex-start",
-                    paddingTop: 22,
-                    color: "#fff",
-                    fontWeight: 900,
-                    fontSize: "0.68rem",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.9)",
-                    pointerEvents: "none",
-                  }}
-                >
-                  <span style={{ transform: "rotate(90deg) translateX(5px)", display: "inline-block", whiteSpace: "nowrap" }}>
-                    {wp.name.replace("Hamburguesa ", "")}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Pin central de la ruleta */}
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: 44,
-              height: 44,
-              borderRadius: "50%",
-              background: "radial-gradient(circle, #ffd54f, #ff6b00)",
-              border: "3px solid #1e1400",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.5)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              zIndex: 5,
-            }}
-          >
-            🔥
-          </div>
-        </div>
-
-        {/* Sección de acciones e información del ganador */}
-        <div style={{ width: "100%", textAlign: "center" }}>
-          {!wheelWinner && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              disabled={isSpinning}
-              onClick={spinWheel}
-              className="bb-btn bb-btn-primary"
-              style={{ width: "80%", padding: "12px", justifyContent: "center" }}
-            >
-              {isSpinning ? "Girando la suerte..." : "¡GIRAR RULETA! 🎡"}
-            </motion.button>
-          )}
-
-          {wheelWinner && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              style={{
-                background: "rgba(255,107,0,0.08)",
-                border: "1px solid rgba(255,107,0,0.25)",
-                borderRadius: 18,
-                padding: 16,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 12,
-              }}
-            >
-              <div style={{ fontSize: "0.8rem", color: "var(--bb-orange)", fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.05em" }}>
-                🎉 ¡Tu menú ideal de hoy!
-              </div>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, width: "100%", justifyContent: "center" }}>
-                <img src={wheelWinner.img} alt={wheelWinner.name} style={{ width: 64, height: 64, borderRadius: 12, objectFit: "cover" }} />
-                <div style={{ textAlign: "left" }}>
-                  <h4 style={{ margin: 0, fontSize: "1rem", fontWeight: 800 }}>{wheelWinner.name}</h4>
-                  <span style={{ fontSize: "1rem", fontWeight: 900, color: "var(--bb-orange)", display: "block", marginTop: 2 }}>{fmt(wheelWinner.price)}</span>
-                </div>
-              </div>
-              <div style={{ display: "flex", gap: 8, width: "100%", marginTop: 4 }}>
-                <button
-                  className="bb-btn bb-btn-ghost"
-                  onClick={spinWheel}
-                  style={{ flex: 1, padding: "10px", fontSize: "0.85rem", justifyContent: "center" }}
-                >
-                  Girar de nuevo
-                </button>
-                <button
-                  className="bb-btn bb-btn-primary"
-                  onClick={() => {
-                    onAdd(wheelWinner);
-                    onClose();
-                  }}
-                  style={{ flex: 1, padding: "10px", fontSize: "0.85rem", justifyContent: "center" }}
-                >
-                  Agregar combo
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
 
 export default function App() {
   const [query, setQuery] = useState("");
@@ -505,20 +171,10 @@ export default function App() {
   const [selected, setSelected] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
 
-  // NUEVAS VARIABLES DE ESTADO PARA RULETA, MÉTODO DE PAGO Y CONFETTI
-  const [openWheel, setOpenWheel] = useState(false);
+  // VARIABLES DE ESTADO PARA MÉTODO DE PAGO Y CONFETTI
   const [paymentMethod, setPaymentMethod] = useState("efectivo");
   const [cashAmount, setCashAmount] = useState("");
   const [confettis, setConfettis] = useState([]);
-
-  // NOTA PARA EDITAR: Callback que se ejecuta al presionar el emoji de hamburguesa flotante.
-  // Abre los detalles del producto estrella (id: "Completa", que es la Hamburguesa Completa).
-  const handleSelectSpecial = () => {
-    const special = PRODUCTS.find(p => p.id === "Completa");
-    if (special) {
-      setSelected(special);
-    }
-  };
 
   // EFECTO DE CONFETI CELEBRATORIO (CONFETTI POP)
   const triggerConfetti = () => {
@@ -631,15 +287,16 @@ export default function App() {
         <header className="bb-header">
           <div style={{ ...maxW, height: 64, display: "flex", alignItems: "center", gap: 12 }}>
             <img src="/logo_billy_burgerss.png" alt="Billy Burgers" style={{ height: 42, width: 42, borderRadius: "50%", objectFit: "cover", border: "2px solid rgba(255,107,0,0.5)" }} />
-            <span style={{ fontWeight: 900, fontSize: "1.2rem", letterSpacing: "-0.02em" }}>Billy <span style={{ color: "var(--bb-orange)" }}>Burgers</span></span>
-            <div style={{ marginLeft: "auto", display: "flex", gap: 10 }}>
-              <a href={waLink} target="_blank" rel="noreferrer" className="bb-btn bb-btn-ghost" style={{ padding: "8px 16px", textDecoration: "none", fontSize: "0.85rem" }}>
-                <Phone size={15} /> WhatsApp
+            <span style={{ fontWeight: 900, fontSize: isMobile ? "1.05rem" : "1.2rem", letterSpacing: "-0.02em" }}>Billy <span style={{ color: "var(--bb-orange)" }}>Burgers</span></span>
+            <div style={{ marginLeft: "auto", display: "flex", gap: isMobile ? 6 : 10 }}>
+              <a href={waLink} target="_blank" rel="noreferrer" className="bb-btn bb-btn-ghost" style={{ padding: isMobile ? "10px" : "8px 16px", textDecoration: "none", fontSize: "0.85rem" }}>
+                <Phone size={15} />
+                {!isMobile && <span>WhatsApp</span>}
               </a>
               <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
                 onClick={() => setOpenCart(true)}
                 className={`bb-btn bb-btn-primary ${totalItems > 0 ? "bb-cart-pulse" : ""}`}
-                style={{ position: "relative", padding: "10px 20px" }}
+                style={{ position: "relative", padding: isMobile ? "10px" : "10px 20px" }}
                 aria-label={`Carrito con ${totalItems} articulos`}>
                 <ShoppingCart size={18} />
                 {!isMobile && <span>Carrito</span>}
@@ -652,9 +309,10 @@ export default function App() {
         </header>
 
         {/* HERO */}
-        <section style={{ ...maxW, padding: "60px 20px 40px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto", gap: 40, alignItems: "center" }}>
-          <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7 }}>
-            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 999, padding: "6px 14px", fontSize: "0.8rem", fontWeight: 700, color: "var(--bb-orange)", marginBottom: 20 }}>
+        <section style={{ ...maxW, padding: isMobile ? "24px 16px 20px" : "60px 20px 40px", display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr auto", gap: isMobile ? 24 : 40, alignItems: "center" }}>
+          <motion.div initial={{ x: -40, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ duration: 0.7 }}
+            style={{ display: "flex", flexDirection: "column", alignItems: isMobile ? "center" : "flex-start" }}>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "rgba(255,107,0,0.12)", border: "1px solid rgba(255,107,0,0.3)", borderRadius: 999, padding: "6px 14px", fontSize: "0.8rem", fontWeight: 700, color: "var(--bb-orange)", marginBottom: isMobile ? 12 : 20 }}>
               <Flame size={14} /> Abierto Jue-Dom — 18:30-22:00
             </div>
             {/* TÍTULO HERO - MODIFICADO SEGÚN SOLICITUD DEL USUARIO */}
@@ -663,15 +321,15 @@ export default function App() {
               Tu hamburguesa favorita,<br />
               <span className="bb-hero-gradient">siempre con papas.</span>
             </h1>
-            <div style={{ marginTop: 28, display: "flex", flexWrap: "wrap", gap: 12 }}>
-              <motion.a whileHover={{ scale: 1.05 }} href="#menu" className="bb-btn bb-btn-primary" style={{ textDecoration: "none" }}>
+            <div style={{ marginTop: isMobile ? 20 : 28, display: "flex", flexDirection: isMobile ? "column" : "row", gap: 12 }}>
+              <motion.a whileHover={{ scale: 1.05 }} href="#menu" className="bb-btn bb-btn-primary" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto", justifyContent: "center" }}>
                 <Star size={16} /> Ver menu completo
               </motion.a>
-              <motion.a whileHover={{ scale: 1.05 }} href={waLink} target="_blank" rel="noreferrer" className="bb-btn bb-btn-ghost" style={{ textDecoration: "none" }}>
+              <motion.a whileHover={{ scale: 1.05 }} href={waLink} target="_blank" rel="noreferrer" className="bb-btn bb-btn-ghost" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto", justifyContent: "center" }}>
                 <Phone size={16} /> Ordenar por WhatsApp
               </motion.a>
             </div>
-            <div style={{ marginTop: 24, display: "flex", flexWrap: "wrap", gap: 16, fontSize: "0.85rem", color: "rgba(255,248,238,0.45)" }}>
+            <div style={{ marginTop: isMobile ? 18 : 24, display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 8 : 16, fontSize: "0.85rem", color: "rgba(255,248,238,0.45)" }}>
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}><MapPin size={14} style={{ color: "var(--bb-orange)" }} /> Guayaquil - Pancho Jacome</span>
               <span style={{ display: "flex", alignItems: "center", gap: 6 }}><Clock size={14} style={{ color: "var(--bb-orange)" }} /> Jue a Dom 18:30-22:00</span>
             </div>
@@ -695,37 +353,14 @@ export default function App() {
               <Search size={18} style={{ color: "var(--bb-orange)", flexShrink: 0 }} />
               <input placeholder="Buscar en el menu..." value={query} onChange={e => setQuery(e.target.value)} aria-label="Buscar productos" />
             </div>
-            <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
+            <div className="bb-categories-scroll" style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
               {CATEGORIES.map(c => (
                 <button key={c.id} className={`bb-pill ${cat === c.id ? "active" : ""}`} onClick={() => setCat(c.id)}>{c.label}</button>
               ))}
             </div>
           </div>
 
-          {/* BOTÓN LANZADOR DE LA RULETA DEL HAMBRE - AGREGADO SEGÚN SOLICITUD */}
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 32 }}>
-            <motion.button 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setOpenWheel(true)}
-              style={{
-                background: "linear-gradient(135deg, rgba(255,107,0,0.15), rgba(255,213,79,0.08))",
-                border: "1px solid rgba(255,107,0,0.45)",
-                borderRadius: 999,
-                padding: "10px 24px",
-                color: "#ffd54f",
-                fontSize: "0.88rem",
-                fontWeight: 800,
-                cursor: "pointer",
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                boxShadow: "0 4px 20px rgba(255,107,0,0.15)"
-              }}
-            >
-              <span>🎡</span> ¿No sabes qué pedir? ¡Gira la Ruleta del Hambre!
-            </motion.button>
-          </div>
+
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 24 }}>
             <AnimatePresence>
@@ -809,18 +444,18 @@ export default function App() {
       <AnimatePresence>
         {openCart && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 150, display: "flex" }}
+            style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.65)", zIndex: 150, display: "flex", alignItems: isMobile ? "flex-end" : "stretch" }}
             onClick={() => setOpenCart(false)}>
             <motion.aside className="bb-cart"
               initial={isMobile ? { y: "100%" } : { x: "100%" }}
               animate={isMobile ? { y: 0 } : { x: 0 }}
               exit={isMobile ? { y: "100%" } : { x: "100%" }}
               transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              style={{ marginLeft: "auto", width: "100%", maxWidth: 420, height: isMobile ? "78vh" : "100%", padding: 24, display: "flex", flexDirection: "column", borderRadius: isMobile ? "24px 24px 0 0" : 0 }}
+              style={{ marginLeft: "auto", width: "100%", maxWidth: 420, height: isMobile ? "90dvh" : "100%", padding: isMobile ? 16 : 24, display: "flex", flexDirection: "column", borderRadius: isMobile ? "24px 24px 0 0" : 0 }}
               onClick={e => e.stopPropagation()}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: isMobile ? 16 : 24 }}>
                 <div>
-                  <h2 style={{ margin: 0, fontSize: "1.4rem", fontWeight: 900 }}>Tu pedido</h2>
+                  <h2 style={{ margin: 0, fontSize: isMobile ? "1.25rem" : "1.4rem", fontWeight: 900 }}>Tu pedido</h2>
                   <p style={{ margin: "2px 0 0", fontSize: "0.8rem", color: "rgba(255,248,238,0.45)" }}>{totalItems} articulo{totalItems !== 1 ? "s" : ""}</p>
                 </div>
                 <button onClick={() => setOpenCart(false)} style={{ background: "rgba(255,107,0,0.1)", border: "1px solid rgba(255,107,0,0.25)", borderRadius: 10, padding: 8, color: "var(--bb-text)", cursor: "pointer" }}><X size={18} /></button>
@@ -833,14 +468,14 @@ export default function App() {
                   <button onClick={() => setOpenCart(false)} className="bb-btn bb-btn-ghost" style={{ marginTop: 12, fontSize: "0.85rem" }}>Ver el menu</button>
                 </div>
               ) : (
-                <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+                <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", gap: 10, paddingRight: 2 }}>
                   <AnimatePresence>
                     {items.map(({ key, product, qty }) => (
                       <motion.div key={key} initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 40 }} className="bb-cart-item">
                         {/* loading="lazy" para las imágenes pequeñas del carrito */}
-                        <img src={product.img} alt={product.name} loading="lazy" style={{ width: 60, height: 60, borderRadius: 12, objectFit: "cover" }} />
+                        <img src={product.img} alt={product.name} loading="lazy" style={{ width: isMobile ? 50 : 60, height: isMobile ? 50 : 60, borderRadius: 10, objectFit: "cover" }} />
                         <div style={{ flex: 1 }}>
-                          <p style={{ margin: 0, fontWeight: 700, fontSize: "0.9rem" }}>{product.name}</p>
+                          <p style={{ margin: 0, fontWeight: 700, fontSize: isMobile ? "0.85rem" : "0.9rem" }}>{product.name}</p>
                           {/* Muestra los adicionales seleccionados */}
                           {product.customExtras?.length > 0 && (
                             <div style={{ fontSize: "0.72rem", color: "var(--bb-orange)", marginTop: 2, lineHeight: 1.2 }}>
@@ -861,17 +496,17 @@ export default function App() {
                 </div>
               )}
 
-              <div style={{ borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: 16, marginTop: 16, display: "flex", flexDirection: "column", gap: 10 }}>
+              <div style={{ borderTop: "1px solid rgba(255,107,0,0.15)", paddingTop: isMobile ? 12 : 16, marginTop: isMobile ? 12 : 16, display: "flex", flexDirection: "column", gap: isMobile ? 8 : 10 }}>
                 {/* MÉTODO DE PAGO Y VUELTO - AGREGADO SEGÚN SOLICITUD */}
                 {items.length > 0 && (
-                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 6 }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 4 }}>
                     <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "rgba(255,248,238,0.85)" }}>Método de Pago:</span>
                     <div style={{ display: "flex", gap: 8 }}>
                       <button 
                         onClick={() => setPaymentMethod("efectivo")}
                         style={{
                           flex: 1,
-                          padding: "8px 10px",
+                          padding: isMobile ? "6px 8px" : "8px 10px",
                           borderRadius: 10,
                           border: paymentMethod === "efectivo" ? "1px solid var(--bb-orange)" : "1px solid rgba(255,248,238,0.1)",
                           background: paymentMethod === "efectivo" ? "rgba(255,107,0,0.12)" : "rgba(0,0,0,0.2)",
@@ -888,7 +523,7 @@ export default function App() {
                         onClick={() => setPaymentMethod("transferencia")}
                         style={{
                           flex: 1,
-                          padding: "8px 10px",
+                          padding: isMobile ? "6px 8px" : "8px 10px",
                           borderRadius: 10,
                           border: paymentMethod === "transferencia" ? "1px solid var(--bb-orange)" : "1px solid rgba(255,248,238,0.1)",
                           background: paymentMethod === "transferencia" ? "rgba(255,107,0,0.12)" : "rgba(0,0,0,0.2)",
@@ -904,7 +539,7 @@ export default function App() {
                     </div>
 
                     {paymentMethod === "efectivo" && (
-                      <div style={{ marginTop: 4, background: "rgba(255,107,0,0.05)", border: "1px solid rgba(255,107,0,0.15)", borderRadius: 12, padding: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+                      <div style={{ marginTop: 4, background: "rgba(255,107,0,0.05)", border: "1px solid rgba(255,107,0,0.15)", borderRadius: 12, padding: isMobile ? 8 : 10, display: "flex", flexDirection: "column", gap: isMobile ? 4 : 6 }}>
                         <label style={{ fontSize: "0.72rem", color: "rgba(255,248,238,0.65)", fontWeight: 600 }}>¿Con cuánto vas a pagar?</label>
                         <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                           <span style={{ color: "var(--bb-orange)", fontWeight: 700, fontSize: "0.85rem" }}>$</span>
@@ -941,21 +576,21 @@ export default function App() {
                   </div>
                 )}
 
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.88rem", color: "rgba(255,248,238,0.6)", borderTop: "1px solid rgba(255,248,238,0.08)", paddingTop: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "rgba(255,248,238,0.6)", borderTop: "1px solid rgba(255,248,238,0.08)", paddingTop: 6 }}>
                   <span>Subtotal</span><span>{fmt(subtotal)}</span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.82rem", color: "rgba(255,248,238,0.45)", alignItems: "flex-start", gap: 8 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: isMobile ? "0.75rem" : "0.82rem", color: "rgba(255,248,238,0.45)", alignItems: "flex-start", gap: 8 }}>
                   <span style={{ whiteSpace: "nowrap", fontStyle: "italic" }}>Delivery</span>
                   <span style={{ textAlign: "right", lineHeight: 1.45, maxWidth: 180 }}>
                     Varía según la zona de entrega.<br/>Se coordina al confirmar el pedido.
                   </span>
                 </div>
-                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: "1.15rem", marginTop: 4 }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontWeight: 900, fontSize: isMobile ? "1.05rem" : "1.15rem", marginTop: 2 }}>
                   <span>Total</span><span style={{ color: "var(--bb-orange)" }}>{fmt(subtotal)}</span>
                 </div>
                 <a href={waLink} target="_blank" rel="noreferrer"
                   className={`bb-wa-btn ${items.length === 0 ? "disabled" : ""}`}
-                  style={{ marginTop: 8 }}>
+                  style={{ marginTop: 4, padding: isMobile ? "11px" : "14px", fontSize: isMobile ? "0.9rem" : "1rem", borderRadius: isMobile ? 12 : 16 }}>
                   <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.122.554 4.118 1.522 5.855L0 24l6.335-1.493A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.804 9.804 0 01-5.032-1.385l-.361-.214-3.736.88.936-3.635-.235-.374A9.793 9.793 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
                   Confirmar por WhatsApp
                 </a>
@@ -965,19 +600,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      {/* RULETA DEL HAMBRE MODAL */}
-      <AnimatePresence>
-        {openWheel && (
-          <WheelModal 
-            onClose={() => setOpenWheel(false)} 
-            onAdd={add} 
-            triggerConfetti={triggerConfetti} 
-          />
-        )}
-      </AnimatePresence>
 
-      {/* MASCOTA FLOTANTE INTERACTIVA - AGREGADO SEGÚN SOLICITUD */}
-      <FloatingMascot onSelectSpecial={handleSelectSpecial} />
 
       {/* EFECTO DE CONFETI CELEBRATORIO (CONFETTI POP) - AGREGADO SEGÚN SOLICITUD */}
       {confettis.map(c => (
